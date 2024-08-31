@@ -1,11 +1,11 @@
 import { Sequelize } from 'sequelize';
 import * as dotenv from 'dotenv';
+import College from '../models/College'; // Import the College model
+import Registration from '../models/Registration'; // Import the Registration model
 
-// Load environment variables from .env file
 dotenv.config();
 
-// Debugging to ensure environment variables are loaded correctly
-console.log(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, process.env.DB_HOST);
+console.log(process.env); // Debugging to ensure environment variables are loaded
 
 const sequelize = new Sequelize(
   process.env.DB_NAME as string,
@@ -18,17 +18,17 @@ const sequelize = new Sequelize(
   }
 );
 
-// Function to sync the database
-async function synchronizeDatabase() {
-  try {
-    await sequelize.sync(); // Sync all defined models to the DB
-    console.log('Database synchronized');
-  } catch (error) {
-    console.error('Error synchronizing database:', error);
-  }
-}
+// Define the associations between models
+College.hasMany(Registration, { foreignKey: 'collegeId' });
+Registration.belongsTo(College, { foreignKey: 'collegeId' });
 
-// Call the sync function
-synchronizeDatabase();
+// Synchronize the database schema with the models
+sequelize.sync({ alter: true })
+  .then(() => {
+    console.log('Database synchronized');
+  })
+  .catch((error) => {
+    console.error('Error synchronizing database:', error);
+  });
 
 export default sequelize;
