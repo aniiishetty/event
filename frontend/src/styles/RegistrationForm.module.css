@@ -1,0 +1,156 @@
+.formContainer {
+    @apply max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg;
+  }
+  
+  .heading {
+    @apply text-3xl font-bold mb-6 text-center text-indigo-600;
+  }
+  
+  .form {
+    @apply space-y-6;
+  }
+  
+  .inputField {
+    @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+  }
+  
+  .button {
+    @apply w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+  }
+  /* Existing styles... */
+
+.errorBorder {
+  border: 2px solid red;
+}
+
+.warningMessage {
+  color: red;
+  margin-top: 10px;
+  font-size: 16px;
+}
+/* RegistrationForm.module.css */
+.bannerContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 50%;
+  height: auto;
+  display: block;
+}
+
+.bannerText {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  
+  padding: 10px; /* Adjust padding as needed */
+  border-radius: 5px;
+  width: 90%; /* Adjust width as needed */
+  max-width: 1200px; /* Optional: limits the maximum width */
+  font-size: 0.9rem; /* Adjust font size as needed */
+}
+.highlight-yellow {
+  color: darkgoldenrod; /* Dark yellow color */
+}
+
+.bannerText h1 {
+  font-size: 2.0rem; /* Adjust header font size */
+  margin-bottom: 0.5rem; /* Adjust spacing between header and paragraph */
+  line-height: 1.0; /* Adjust line height to prevent excessive wrapping */
+  white-space: nowrap; /* Prevents wrapping */
+}
+
+.bannerText p {
+  font-size: 1.1rem; /* Adjust paragraph font size */
+}
+.bannerText p span.IIMSTC {
+  font-size: 1.1rem;
+  color: darkgoldenrod;
+}
+.logosContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+ 
+  z-index: 1000; /* Ensures it stays on top */
+  background-color: white; /* Optional: set background color to ensure visibility */
+  width: 100%; /* Optional: ensure it spans the entire width */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: add a shadow for better visibility */
+}
+  
+   /* Adjust the gap as needed */
+
+
+/* Specific styling for AICTE logo */
+.aicteLogo {
+  max-width: 50px; /* Adjust the size as needed */
+  height: 50px;
+  /* Add any specific styles for the AICTE logo here */
+}
+
+/* Specific styling for VTU logo */
+.vtuLogo {
+  max-width:100px; /* Adjust the size as needed */
+  height: 50px;
+  /* Add any specific styles for the VTU logo here */
+}
+.ugcLogo {
+  max-width: 80px; /* Adjust the size as needed */
+  height: 80px;
+  /* Adjust this value to move the logo further up */
+  /* Add any specific styles for the VTU logo here */
+}
+
+
+/* Specific styling for IIMSTC logo */
+.iimstcLogo {
+  max-width:100px; /* Adjust the size as needed */
+  height: 50px;
+  /* Add any specific styles for the IIMSTC logo here */
+}
+.aicteLogo,
+.vtuLogo,
+.iimstcLogo,
+.ugcLogo {
+    margin-right: 10px; /* Adjust spacing between logos */
+    max-height: 50px; /* Control the logo size */
+}
+
+/* Add these styles for the slide transition */
+.slideTransition {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateX(-100%);
+  transition: transform 0.5s ease-in-out;
+}
+
+.slideTransition.show {
+  transform: translateX(0);
+}
+
+.formContainer {
+  position: relative;
+  overflow: hidden; /* Ensure the sliding content is clipped */
+}
+
+.submissionStatus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
