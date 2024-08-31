@@ -31,12 +31,13 @@ sequelize.authenticate()
   });
 
 // Synchronize the database schema with the models
-sequelize.sync({ alter: true })
+sequelize.sync({ force: true })
   .then(() => {
-    console.log('Database synchronized');
+    console.log('Database synchronized and tables recreated');
   })
   .catch((error) => {
     console.error('Error synchronizing database:', error);
   });
+
 
 export default sequelize;
