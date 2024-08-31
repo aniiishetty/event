@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
-import { College } from './College'; // Import College model
+import { College } from './College';
 
 interface RegistrationAttributes {
   id?: number;
@@ -11,7 +11,7 @@ interface RegistrationAttributes {
   email: string;
   photo?: Buffer;
   reason: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
-  researchPaper?: Buffer; // New field for the research paper file
+  researchPaper?: Buffer;
 }
 
 interface RegistrationCreationAttributes extends Optional<RegistrationAttributes, 'id' | 'photo' | 'researchPaper'> {}
@@ -25,7 +25,7 @@ class Registration extends Model<RegistrationAttributes, RegistrationCreationAtt
   public email!: string;
   public photo?: Buffer;
   public reason!: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
-  public researchPaper?: Buffer; // New field for the research paper file
+  public researchPaper?: Buffer;
 }
 
 Registration.init(
@@ -47,7 +47,7 @@ Registration.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Colleges', // Table name
+        model: 'colleges', // Ensure this matches the table name exactly
         key: 'id',
       },
     },
@@ -69,8 +69,8 @@ Registration.init(
       allowNull: false,
     },
     researchPaper: {
-      type: DataTypes.BLOB('long'), // Allows uploading files up to a certain size
-      allowNull: true, // Only allow if reason is "To present research paper"
+      type: DataTypes.BLOB('long'),
+      allowNull: true,
     },
   },
   {
