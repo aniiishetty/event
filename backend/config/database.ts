@@ -1,7 +1,5 @@
 import { Sequelize } from 'sequelize';
 import * as dotenv from 'dotenv';
-import {College} from '../models/College'; // Import the College model
-import {Registration} from '../models/Registration'; // Import the Registration model
 
 dotenv.config();
 
@@ -17,10 +15,6 @@ const sequelize = new Sequelize(
     logging: false,
   }
 );
-
-// Define the associations between models
-College.hasMany(Registration, { foreignKey: 'collegeId' });
-Registration.belongsTo(College, { foreignKey: 'collegeId' });
 
 // Synchronize the database schema with the models
 sequelize.sync({ alter: true })
