@@ -231,15 +231,16 @@ const RegistrationForm: React.FC = () => {
             <div className={styles.bannerContainer}>
                 {/* Logos */}
                 <div className={styles.logosContainer}>
-                    <img
-                        src="https://vectorseek.com/wp-content/uploads/2023/09/AICTE-Logo-Vector.svg-.png"
-                        alt="AICTE Logo"
-                        className={styles.aicteLogo}
-                    />
+                    
                     <img
                         src="https://iimstc.com/wp-content/uploads/2024/06/VTU-New.jpg"
                         alt="VTU Logo"
                         className={styles.vtuLogo}
+                    />
+                    <img
+                        src="https://vectorseek.com/wp-content/uploads/2023/09/AICTE-Logo-Vector.svg-.png"
+                        alt="AICTE Logo"
+                        className={styles.aicteLogo}
                     />
                     <img
                         src="https://iimstc.com/wp-content/uploads/2021/10/log.png"
