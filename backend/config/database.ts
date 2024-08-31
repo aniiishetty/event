@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize';
 import * as dotenv from 'dotenv';
-import College from '../models/College'; // Import the College model
-import Registration from '../models/Registration'; // Import the Registration model
+import {College} from '../models/College'; // Import the College model
+import {Registration} from '../models/Registration'; // Import the Registration model
 
 dotenv.config();
 
