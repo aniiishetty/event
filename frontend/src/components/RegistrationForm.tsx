@@ -324,7 +324,7 @@ const RegistrationForm: React.FC = () => {
                     <InputField label="Email" name="email" value={formData.email} onChange={handleChange} type="email" />
                     <InputField label="Photo" name="photo" value={null} onChange={handleChange} type="file" />
                     <div>
-                        <label htmlFor="reason" className="block text-sm font-medium text-gray-700">Reason for Visit:</label>
+                        <label htmlFor="reason" className="block text-sm font-medium text-gray-700">Interested in</label>
                         <select
                             name="reason"
                             value={formData.reason}
@@ -332,7 +332,7 @@ const RegistrationForm: React.FC = () => {
                             required
                             className={styles.inputField}
                         >
-                            <option value="" disabled>Select reason</option>
+                            <option value="" disabled>Select your interest</option>
                             <option value="To know about International Internship">To know about International Internship</option>
                             <option value="To know about Textbook">To know about Textbook</option>
                             <option value="To present research paper">To present research paper</option>
