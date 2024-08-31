@@ -1,6 +1,7 @@
 import express from 'express';
 import cors, { CorsOptions } from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import registrationRoutes from './routes/registrationRoutes';
 import collegeRoutes from './routes/collegeRoutes';
 import sequelize from './models/index'; // Import the Sequelize instance
