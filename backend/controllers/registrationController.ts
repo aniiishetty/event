@@ -5,13 +5,11 @@ import multer from 'multer';
 import nodemailer from 'nodemailer';
 
 // Configure multer to handle file uploads
-// Configure multer to handle file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ 
     storage,
     limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
-
 
 // Configure nodemailer with Gmail
 const transporter = nodemailer.createTransport({
@@ -21,10 +19,12 @@ const transporter = nodemailer.createTransport({
         pass: 'dbaqgxwsxmajreyt',
     },
 });
+
 interface FileFields {
     photo?: Express.Multer.File[];
     researchPaper?: Express.Multer.File[];
 }
+
 export const registerUser = async (req: Request, res: Response) => {
     const { name, designation, collegeId, phone, email, reason } = req.body;
     const files = req.files as FileFields; // Cast to the FileFields interface
@@ -62,39 +62,6 @@ export const registerUser = async (req: Request, res: Response) => {
             photo,
             reason,
             researchPaper
-        });
-
-        // Send confirmation email to the user
-        const userMailOptions = {
-            from: 'anishetty391@gmail.com',
-            to: email,
-            subject: 'Registration Confirmation',
-            text: `
-                Hello ${name},
-
-                Thank you for registering with us!
-
-                Here are the details of your registration:
-                Name: ${name}
-                Designation: ${designation}
-                College: ${collegeName}
-                Phone: ${phone}
-                Email: ${email}
-                Reason: ${reason}
-
-                If you have any questions, feel free to reach out.
-
-                Best regards,
-                Your Company Name
-            `
-        };
-
-        transporter.sendMail(userMailOptions, (error, info) => {
-            if (error) {
-                console.log('Error sending email to user:', error);
-            } else {
-                console.log('Confirmation email sent to user:', info.response);
-            }
         });
 
         // Send email to the representative with the user's photo and research paper if available
@@ -142,4 +109,3 @@ export const registerUser = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
-
