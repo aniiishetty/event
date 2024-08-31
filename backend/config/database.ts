@@ -1,9 +1,11 @@
 import { Sequelize } from 'sequelize';
 import * as dotenv from 'dotenv';
 
+// Load environment variables from .env file
 dotenv.config();
 
-console.log(process.env); // Debugging to ensure environment variables are loaded
+// Debugging to ensure environment variables are loaded correctly
+console.log(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, process.env.DB_HOST);
 
 const sequelize = new Sequelize(
   process.env.DB_NAME as string,
@@ -16,12 +18,17 @@ const sequelize = new Sequelize(
   }
 );
 
-// Synchronize the database schema with the models
-  .then(() => {
+// Function to sync the database
+async function synchronizeDatabase() {
+  try {
+    await sequelize.sync(); // Sync all defined models to the DB
     console.log('Database synchronized');
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Error synchronizing database:', error);
-  });
+  }
+}
+
+// Call the sync function
+synchronizeDatabase();
 
 export default sequelize;
