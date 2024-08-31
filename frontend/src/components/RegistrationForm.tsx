@@ -16,7 +16,7 @@ const useFetchColleges = () => {
     React.useEffect(() => {
         const fetchColleges = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/colleges');
+                const response = await axios.get('/api/colleges');
                 setColleges(response.data);
 
                 // Simulate a longer loading time
@@ -134,7 +134,7 @@ const RegistrationForm: React.FC = () => {
 
         if (searchValue.length > 2) {
             try {
-                const response = await axios.get(`http://localhost:3000/api/colleges/search?q=${searchValue}`);
+                const response = await axios.get(`/api/colleges/search?q=${searchValue}`);
                 setColleges(response.data);
                 setCollegeWarning('');
             } catch (error) {
@@ -167,7 +167,7 @@ const RegistrationForm: React.FC = () => {
         setAddingCollege(true);
 
         try {
-            const response = await axios.post('http://localhost:3000/api/colleges/add', { name: newCollege });
+            const response = await axios.post('/api/colleges/add', { name: newCollege });
             const addedCollege = { id: response.data.id, name: newCollege };
             setColleges([...colleges, addedCollege]);
             setFormData((prevData) => ({
@@ -198,7 +198,7 @@ const RegistrationForm: React.FC = () => {
     });
 
     try {
-      const response = await axios.post('http://localhost:3000/api/registrations/register', formDataToSend, {
+      const response = await axios.post('/api/registrations/register', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setSubmissionStatus('success'); // Update submission status
