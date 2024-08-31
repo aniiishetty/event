@@ -11,8 +11,6 @@ interface CollegeCreationAttributes extends Optional<CollegeAttributes, 'id'> {}
 class College extends Model<CollegeAttributes, CollegeCreationAttributes> implements CollegeAttributes {
   public id?: number;
   public name!: string;
-
-  
 }
 
 College.init(
@@ -30,7 +28,6 @@ College.init(
   {
     sequelize,
     tableName: 'colleges',
-    
   }
 );
 
