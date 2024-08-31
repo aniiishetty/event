@@ -17,7 +17,6 @@ const sequelize = new Sequelize(
 );
 
 // Synchronize the database schema with the models
-sequelize.sync({ alter: true })
   .then(() => {
     console.log('Database synchronized');
   })
