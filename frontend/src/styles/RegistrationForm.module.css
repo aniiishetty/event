@@ -10,7 +10,10 @@
     @apply space-y-6;
   }
   
- 
+  .inputField {
+    @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+  }
+  
   /* src/styles/RegistrationForm.module.css */
 .buttonContainer {
   @apply flex space-x-4; /* Adds horizontal spacing between buttons */
@@ -388,12 +391,6 @@
   height: auto; 
   margin-left: 20px; 
 }
-.input-field, .select-field {
-  width: 100%; /* Full width */
-  padding: 10px; /* Padding inside the field */
-  margin-bottom: 15px; /* Space between fields */
-  border: 1px solid #ccc; /* Light grey border */
-  border-radius: 4px; /* Rounded corners */
-  font-size: 16px; /* Font size */
-  box-sizing: border-box; /* Ensures padding doesn't affect width */
+.inputField {
+    @apply mt-1 block w-full py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
 }
