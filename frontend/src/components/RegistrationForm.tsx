@@ -323,32 +323,7 @@ const RegistrationForm: React.FC = () => {
             <div className={styles.formContainer}>
                 <h2 className={styles.heading}>Event Registration Form</h2>
                 <form onSubmit={handleSubmit} className={styles.form}>
-                    <InputField
-  label="Name"
-  name="name"
-  value={formData.name}
-  onChange={handleChange}
-  style={{
-    marginTop: '0.25rem', // mt-1
-    display: 'block', // block
-    width: '100%', // w-full
-    paddingLeft: '0.75rem', // px-3
-    paddingRight: '0.75rem', // px-3
-    paddingTop: '0.5rem', // py-2
-    paddingBottom: '0.5rem', // py-2
-    borderWidth: '1px', // border
-    borderColor: '#D1D5DB', // border-gray-300
-    borderRadius: '0.375rem', // rounded-md
-    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)', // shadow-sm
-    outline: 'none', // focus:outline-none
-    focus: {
-      ringColor: '#6366F1', // focus:ring-indigo-500
-      borderColor: '#6366F1' // focus:border-indigo-500
-    },
-    fontSize: '0.875rem', // sm:text-sm
-  }}
-/>
-
+                    <InputField label="Name" name="name" value={formData.name} onChange={handleChange} />
                     <SelectField label="Designation" name="designation" value={formData.designation} onChange={handleChange} options={[
                         { value: 'Principal', label: 'Principal' },
                         { value: 'Chairperson', label: 'Chairperson' }
