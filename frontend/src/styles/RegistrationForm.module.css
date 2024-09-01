@@ -24,7 +24,7 @@
 }
 
 .warningMessage {
-  color: red;
+  color: blue; /* Change the color to blue */
   margin-top: 10px;
   font-size: 16px;
 }
