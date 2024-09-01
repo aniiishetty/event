@@ -121,7 +121,7 @@ const SelectField: React.FC<{ label: string, name: string, value: string, onChan
             value={value}
             onChange={onChange}
             required
-            className={${styles.inputField} ${borderClass}}
+            className={`${styles.inputField} ${borderClass}`}
         >
             <option value="" disabled>Select {label.toLowerCase()}</option>
             {options.map((option) => (
@@ -130,6 +130,7 @@ const SelectField: React.FC<{ label: string, name: string, value: string, onChan
         </select>
     </div>
 );
+
 
 // Main registration form component
 const RegistrationForm: React.FC = () => {
