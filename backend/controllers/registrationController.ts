@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import multer from 'multer';
 import { Registration } from '../models/Registration';
 import { College } from '../models/College';
-import multer from 'multer';
 import nodemailer from 'nodemailer';
 
 // Configure multer to handle file uploads
@@ -25,13 +25,28 @@ interface FileFields {
     researchPaper?: Express.Multer.File[];
 }
 
+// Middleware to handle file size errors
+const handleFileSizeError = (err: any, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ message: 'File size should not exceed 5MB' });
+    }
+    next(err); // Pass other errors to the default error handler
+};
+
 export const registerUser = async (req: Request, res: Response) => {
     const { name, designation, collegeId, phone, email, reason } = req.body;
     const files = req.files as FileFields; // Cast to the FileFields interface
-    const photo = files?.photo?.[0]?.buffer; // Get photo buffer from request
+    const photo = files?.photo?.[0]; // Get the photo file from request
     const researchPaper = files?.researchPaper?.[0]?.buffer; // Get research paper buffer from request
 
     try {
+        // Check if the photo size exceeds 1MB
+        if (photo && photo.size > 1 * 1024 * 1024) {
+            return res.status(400).json({ message: 'Photo size should not exceed 1MB' });
+        }
+
+        const photoBuffer = photo?.buffer;
+
         // Check if the email already exists
         const existingUser = await Registration.findOne({ where: { email } });
         if (existingUser) {
@@ -44,7 +59,7 @@ export const registerUser = async (req: Request, res: Response) => {
             const college = await College.findByPk(collegeId);
             const collegeName = college ? college.name : 'Unknown College';
             return res.status(400).json({ 
-                message: `The college ${collegeName} is already registered by another user. Please contact support if this is a mistake.` 
+                message: `The college ${collegeName} is already registered by another user. Please reach out to the concerned team or <a href="mailto:admin@iimstc.com">contact admin@iimstc.com</a> for assistance.` 
             });
         }
 
@@ -59,7 +74,7 @@ export const registerUser = async (req: Request, res: Response) => {
             collegeId,
             phone,
             email,
-            photo,
+            photo: photoBuffer,
             reason,
             researchPaper
         });
@@ -84,7 +99,7 @@ export const registerUser = async (req: Request, res: Response) => {
             attachments: [
                 {
                     filename: 'photo.jpg',
-                    content: photo,
+                    content: photoBuffer,
                     encoding: 'base64'
                 },
                 ...(researchPaper ? [{
