@@ -297,7 +297,7 @@ const RegistrationForm: React.FC = () => {
 
   {/* Banner Text */}
   <div className={styles.bannerText}>
-    <h1>Visvesvaraya Technological University welcomes with Colaboration with <br/>
+    <h1>Visvesvaraya Technological University Welcomes with Collaboration with <br/>
         The International Institute of Medical Science & Technology Council <br/>
         for Mega Event</h1>
     <p>
