@@ -59,7 +59,7 @@ export const registerUser = async (req: Request, res: Response) => {
             const college = await College.findByPk(collegeId);
             const collegeName = college ? college.name : 'Unknown College';
             return res.status(400).json({ 
-                message: `The college ${collegeName} is already registered by another user. Please reach out to the concerned team or <a href="mailto:admin@iimstc.com">contact admin@iimstc.com</a> for assistance.` 
+                message: `The college ${collegeName} is already registered. Please reach out to the concerned team or contact admin@iimstc.com</a> for assistance.` 
             });
         }
 
