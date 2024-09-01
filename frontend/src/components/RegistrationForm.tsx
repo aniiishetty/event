@@ -148,22 +148,23 @@ const RegistrationForm: React.FC = () => {
     const photoInputRef = React.useRef<HTMLInputElement | null>(null); // Add ref for photo input
 
     // Handle college search and filter matches
-    const handleSearchCollege = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const searchValue = e.target.value;
-        setSearchCollege(searchValue);
+   const handleSearchCollege = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchValue = e.target.value;
+    setSearchCollege(searchValue);
 
-        if (searchValue.length > 2) {
-            try {
-                const response = await axios.get(/api/colleges/search?q=${searchValue});
-                setColleges(response.data);
-                setCollegeWarning('');
-            } catch (error) {
-                console.error('Error searching colleges:', error);
-            }
+    if (searchValue.length > 2) {
+        try {
+            const response = await axios.get(`/api/colleges/search?q=${searchValue}`);
+            setColleges(response.data);
+            setCollegeWarning('');
+        } catch (error) {
+            console.error('Error searching colleges:', error);
         }
+    }
 
-        handleChange(e);
-    };
+    handleChange(e);
+};
+
 
     // Handle college selection, including "Other"
     const handleSelectCollege = (e: React.ChangeEvent<HTMLSelectElement>) => {
