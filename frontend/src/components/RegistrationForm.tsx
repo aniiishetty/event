@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import axios from 'axios';
 import styles from '../styles/RegistrationForm.module.css';
 import LoadingScreen from './LoadingScreen'; // Import the LoadingScreen component
+import useForm from '../hooks/useForm';
 
 interface College {
     id: number;
@@ -35,7 +36,7 @@ const useFetchColleges = () => {
 };
 
 // Custom hook to manage form data
-const useForm = () => {
+const useTheForm = () => {
     const [formData, setFormData] = React.useState({
         name: '',
         designation: '',
@@ -92,7 +93,7 @@ const InputField = forwardRef<HTMLInputElement, { label: string, name: string, v
             value={type !== 'file' ? value || '' : undefined}
             onChange={onChange}
             required={name !== 'photo' && name !== 'researchPaper'}
-            className={`${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}`}
+            className={${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}}
             ref={ref} // Attach the ref
         />
         {error && <p className={styles.errorText}>{error}</p>}
@@ -111,7 +112,7 @@ const SelectField: React.FC<{ label: string, name: string, value: string, onChan
             value={value}
             onChange={onChange}
             required
-            className={`${styles.inputField} ${borderClass}`}
+            className={${styles.inputField} ${borderClass}}
         >
             <option value="" disabled>Select {label.toLowerCase()}</option>
             {options.map((option) => (
@@ -124,7 +125,7 @@ const SelectField: React.FC<{ label: string, name: string, value: string, onChan
 // Main registration form component
 const RegistrationForm: React.FC = () => {
     const { colleges, setColleges, isLoading } = useFetchColleges();
-    const { formData, handleChange, resetForm, setFormData } = useForm();
+    const { formData, handleChange, resetForm, setFormData } = useTheForm();
     const [searchCollege, setSearchCollege] = React.useState('');
     const [newCollege, setNewCollege] = React.useState('');
     const [addingCollege, setAddingCollege] = React.useState(false);
@@ -143,7 +144,7 @@ const RegistrationForm: React.FC = () => {
 
         if (searchValue.length > 2) {
             try {
-                const response = await axios.get(`/api/colleges/search?q=${searchValue}`);
+                const response = await axios.get(/api/colleges/search?q=${searchValue});
                 setColleges(response.data);
                 setCollegeWarning('');
             } catch (error) {
@@ -249,58 +250,67 @@ const RegistrationForm: React.FC = () => {
         return <LoadingScreen />;
     }
 
+    const handleClear = () => {
+        resetForm(); // Call resetForm from useForm to clear form data
+      };
+
     return (
         <>
             {/* Banner Image with Overlay Text */}
             <div className={styles.bannerContainer}>
-                {/* VTU Logo on the left */}
-               
+  {/* Logo Container */}
+  <div className={styles.logoContainer}>
+    <div className={styles.vtuLogoContainer}>
+      <img
+        src="https://vtu.ac.in/wp-content/uploads/2020/10/vtu_logo.png"
+        alt="VTU Logo"
+        className={styles.vtuLogo}
+      />
+    </div>
 
-                {/* Other Logos on the top right */}
-                <div className={styles.logosContainer}>
-                <img
-                    src="https://iimstc.com/wp-content/uploads/2024/06/VTU-New.jpg"
-                    alt="VTU Logo"
-                    className={`${styles.vtuLogo} ${styles.vtuLogoLeft}`} // Added vtuLogoLeft for specific styling
-                />
-                    <img
+    <div className={styles.iimstcLogoContainer}>
+      <img
+        src="https://iimstc.com/wp-content/uploads/2021/10/log.png"
+        alt="IIMSTC Logo"
+        className={styles.iimstcLogo}
+      />
+    </div>
+  </div>
+
+  {/* Banner Image */}
+  <img
+    src="https://vtu.ac.in/wp-content/uploads/2019/08/vtu-banner-1a-1516x552.jpg"
+    alt="Event Banner"
+    className={styles.bannerImage}
+  />
+
+  {/* Banner Text */}
+  <div className={styles.bannerText}>
+    <h1>Visvesvaraya Technological University welcomes with Colaboration with <br/>
+        The International Institute of Medical Science & Technology Council <br/>
+        for Mega Event</h1>
+    <p>
+      
+      Opportunities on Transforming India Through Youth Skill Development
+    </p>
+  </div>
+</div>
+
+      <div className='img-container'>
+      <img
                         src="https://vectorseek.com/wp-content/uploads/2023/09/AICTE-Logo-Vector.svg-.png"
                         alt="AICTE Logo"
                         className={styles.aicteLogo}
                     />
                     <img
-                        src="https://iimstc.com/wp-content/uploads/2021/10/log.png"
-                        alt="IIMSTC Logo"
-                        className={styles.iimstcLogo}
-                    />
-                    <img
                         src="https://presentations.gov.in/wp-content/uploads/2020/06/UGC-Preview.png?x31571"
                         alt="UGC Logo"
                         className={styles.ugcLogo}
-                    />
-                </div>
-
-                {/* Banner Image */}
-                <img
-                    src="https://iimstc.com/wp-content/themes/eikra/assets/img/banner.jpg"
-                    alt="Event Banner"
-                    className={styles.bannerImage}
-                />
-
-                {/* Banner Text */}
-                <div className={styles.bannerText}>
-                    <h1>An International Forum on Transforming India Through International Internship</h1>
-                    <p>
-                        <span className={styles.IIMSTC}>IIMSTC</span> &gt;
-                        <span className={styles.IIMSTC}>Events</span> &gt;
-                        An International Forum on Transforming India Through International Internship
-                    </p>
-                </div>
-            </div>
+                    /></div>
 
             {/* Form Container */}
             <div className={styles.formContainer}>
-                <h2 className={styles.heading}>Event Registration</h2>
+                <h2 className={styles.heading}>Event Registration Form</h2>
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <InputField label="Name" name="name" value={formData.name} onChange={handleChange} />
                     <SelectField label="Designation" name="designation" value={formData.designation} onChange={handleChange} options={[
@@ -388,11 +398,20 @@ const RegistrationForm: React.FC = () => {
                         <InputField label="Research Paper" name="researchPaper" value={null} onChange={handleChange} type="file" />
                     )}
 
-                    <button type="submit" className={styles.button} disabled={isSubmitting}>Register</button>
+<div className={styles.buttonContainer}>
+            <button type="submit" className={styles.button} disabled={isSubmitting}>Register</button>
+            <button
+              type="button"
+              className={styles.button}
+              onClick={handleClear}
+            >
+              Clear
+            </button>
+          </div>
 
                     {/* Display the error message below the register button */}
                     {collegeWarning && (
-                        <p className={`${styles.warningMessage} ${styles.errorText}`}>{collegeWarning}</p>
+                        <p className={${styles.warningMessage} ${styles.errorText}}>{collegeWarning}</p>
                     )}
 
                     {/* Success message after submission */}
