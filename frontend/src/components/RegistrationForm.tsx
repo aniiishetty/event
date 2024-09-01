@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import axios from 'axios';
 import styles from '../styles/RegistrationForm.module.css';
 import LoadingScreen from './LoadingScreen'; // Import the LoadingScreen component
@@ -83,7 +83,7 @@ const useForm = () => {
 };
 
 // Reusable input field component
-const InputField: React.FC<{ label: string, name: string, value: string | null, onChange: any, type?: string, borderClass?: string }> = ({ label, name, value, onChange, type = 'text', borderClass = '' }) => (
+const InputField = forwardRef<HTMLInputElement, { label: string, name: string, value: string | null, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, type?: string, borderClass?: string, error?: string }>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
     <div>
         <label htmlFor={name} className="block text-sm font-medium text-gray-700">{label}:</label>
         <input
@@ -92,10 +92,15 @@ const InputField: React.FC<{ label: string, name: string, value: string | null, 
             value={type !== 'file' ? value || '' : undefined}
             onChange={onChange}
             required={name !== 'photo' && name !== 'researchPaper'}
-            className={`${styles.inputField} ${borderClass}`}
+            className={`${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}`}
+            ref={ref} // Attach the ref
         />
+        {error && <p className={styles.errorText}>{error}</p>}
     </div>
-);
+));
+
+InputField.displayName = 'InputField';
+
 
 // Reusable select field component
 const SelectField: React.FC<{ label: string, name: string, value: string, onChange: any, options: { value: string | number, label: string }[], borderClass?: string }> = ({ label, name, value, onChange, options, borderClass = '' }) => (
@@ -124,8 +129,12 @@ const RegistrationForm: React.FC = () => {
     const [newCollege, setNewCollege] = React.useState('');
     const [addingCollege, setAddingCollege] = React.useState(false);
     const [collegeWarning, setCollegeWarning] = React.useState('');
+    const [emailBorderClass, setEmailBorderClass] = React.useState('');
+
     const [isSubmitting, setIsSubmitting] = React.useState(false); // Add submitting state
     const [submissionStatus, setSubmissionStatus] = React.useState<string | null>(null);
+
+    const photoInputRef = React.useRef<HTMLInputElement | null>(null); // Add ref for photo input
 
     // Handle college search and filter matches
     const handleSearchCollege = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,36 +196,51 @@ const RegistrationForm: React.FC = () => {
 
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true); // Set submitting state
-
-    const formDataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value) {
-        formDataToSend.append(key, value as any);
-      }
-    });
-
-    try {
-      const response = await axios.post('/api/registrations/register', formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setSubmissionStatus('success'); // Update submission status
-      
-      resetForm();
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setCollegeWarning(error.response?.data.message || 'An error occurred. Please try again.');
-      } else {
-        console.error('Error:', error);
-        setCollegeWarning('An unexpected error occurred. Please try again.');
-      }
-    } finally {
-      setIsSubmitting(false); // Reset submitting state
-    }
-  };
-
-
+        e.preventDefault();
+        setIsSubmitting(true); // Set submitting state
+    
+        const formDataToSend = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+            if (value) {
+                formDataToSend.append(key, value as any);
+            }
+        });
+    
+        try {
+            const response = await axios.post('/api/registrations/register', formDataToSend, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setSubmissionStatus('success'); // Update submission status
+            resetForm();
+            setEmailBorderClass(''); // Reset email border on successful submission
+            setCollegeWarning(''); // Reset any college warnings on successful submission
+    
+            // Reset photo input value
+            if (photoInputRef.current) {
+                photoInputRef.current.value = '';
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const errorMessage = error.response?.data.message || 'An error occurred. Please try again.';
+    
+                // Check if the error is related to the email field
+                if (errorMessage.toLowerCase().includes('email')) {
+                    setEmailBorderClass(styles.errorBorder); // Set red border for email field
+                    setCollegeWarning(errorMessage); // Show error message below register button
+                } else {
+                    setEmailBorderClass(''); // Reset email border if the error is not related to email
+                    setCollegeWarning(errorMessage); // Show error message for other issues
+                }
+            } else {
+                console.error('Error:', error);
+                setCollegeWarning('An unexpected error occurred. Please try again.');
+            }
+        } finally {
+            setIsSubmitting(false); // Reset submitting state
+        }
+    };
+    
+    
     // Determine border class based on form state
     const collegeBorderClass = collegeWarning ? styles.errorBorder : '';
 
@@ -229,14 +253,16 @@ const RegistrationForm: React.FC = () => {
         <>
             {/* Banner Image with Overlay Text */}
             <div className={styles.bannerContainer}>
-                {/* Logos */}
+                {/* VTU Logo on the left */}
+               
+
+                {/* Other Logos on the top right */}
                 <div className={styles.logosContainer}>
-                    
-                    <img
-                        src="https://iimstc.com/wp-content/uploads/2024/06/VTU-New.jpg"
-                        alt="VTU Logo"
-                        className={styles.vtuLogo}
-                    />
+                <img
+                    src="https://iimstc.com/wp-content/uploads/2024/06/VTU-New.jpg"
+                    alt="VTU Logo"
+                    className={`${styles.vtuLogo} ${styles.vtuLogoLeft}`} // Added vtuLogoLeft for specific styling
+                />
                     <img
                         src="https://vectorseek.com/wp-content/uploads/2023/09/AICTE-Logo-Vector.svg-.png"
                         alt="AICTE Logo"
@@ -260,13 +286,13 @@ const RegistrationForm: React.FC = () => {
                     alt="Event Banner"
                     className={styles.bannerImage}
                 />
-                
+
                 {/* Banner Text */}
                 <div className={styles.bannerText}>
                     <h1>An International Forum on Transforming India Through International Internship</h1>
                     <p>
-                        <span className={styles.IIMSTC}>IIMSTC</span> &gt; 
-                        <span className={styles.IIMSTC}>Events</span> &gt; 
+                        <span className={styles.IIMSTC}>IIMSTC</span> &gt;
+                        <span className={styles.IIMSTC}>Events</span> &gt;
                         An International Forum on Transforming India Through International Internship
                     </p>
                 </div>
@@ -281,16 +307,16 @@ const RegistrationForm: React.FC = () => {
                         { value: 'Principal', label: 'Principal' },
                         { value: 'Chairperson', label: 'Chairperson' }
                     ]} />
+
                     {/* College Search and Select */}
                     <div>
                         <label htmlFor="collegeId" className="block text-sm font-medium text-gray-700">College:</label>
-                        
                         {colleges.length > 0 && (
                             <select
                                 name="collegeId"
                                 value={formData.collegeId}
                                 onChange={handleSelectCollege}
-                                className={`${styles.inputField} ${collegeBorderClass}`}
+                                className={styles.inputField} // Removed collegeBorderClass
                             >
                                 <option value="">Select a college</option>
                                 {colleges.map((college) => (
@@ -321,11 +347,30 @@ const RegistrationForm: React.FC = () => {
                             </div>
                         )}
                     </div>
+
                     <InputField label="Phone" name="phone" value={formData.phone} onChange={handleChange} />
-                    <InputField label="Email" name="email" value={formData.email} onChange={handleChange} type="email" />
-                    <InputField label="Photo" name="photo" value={null} onChange={handleChange} type="file" />
+
+                    <InputField
+                        label="Email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        type="email"
+                        borderClass={emailBorderClass} // Only this field uses emailBorderClass
+                    />
+
+<InputField
+    label="Photo"
+    name="photo"
+    value={null}
+    onChange={handleChange}
+    type="file"
+    ref={photoInputRef} // Assign the ref here
+/>
+
+
                     <div>
-                        <label htmlFor="reason" className="block text-sm font-medium text-gray-700">Interested in</label>
+                        <label htmlFor="reason" className="block text-sm font-medium text-gray-700">Interested in :</label>
                         <select
                             name="reason"
                             value={formData.reason}
@@ -333,7 +378,7 @@ const RegistrationForm: React.FC = () => {
                             required
                             className={styles.inputField}
                         >
-                            <option value="" disabled>Select your interest</option>
+                            <option value="" disabled>Select reason</option>
                             <option value="To know about International Internship">To know about International Internship</option>
                             <option value="To know about Textbook">To know about Textbook</option>
                             <option value="To present research paper">To present research paper</option>
@@ -344,15 +389,18 @@ const RegistrationForm: React.FC = () => {
                     )}
 
                     <button type="submit" className={styles.button} disabled={isSubmitting}>Register</button>
-                    {/* Display college warning message below the register button */}
+
+                    {/* Display the error message below the register button */}
                     {collegeWarning && (
                         <p className={`${styles.warningMessage} ${styles.errorText}`}>{collegeWarning}</p>
                     )}
+
+                    {/* Success message after submission */}
                     {submissionStatus === 'success' && (
-        <div className={styles.submissionStatus}>
-          <p>Registration successful! We will contact you soon.</p>
-        </div>
-      )}
+                        <div className={styles.submissionStatus}>
+                            <p>Thank you for registering for <strong> An International Forum on Transforming India Through International Internship Event!!</strong> We will contact you soon with Invite details.</p>
+                        </div>
+                    )}
                 </form>
             </div>
         </>
