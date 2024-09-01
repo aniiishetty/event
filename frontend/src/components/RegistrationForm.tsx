@@ -84,15 +84,7 @@ const useTheForm = () => {
 };
 
 // Reusable input field component
-const InputField = forwardRef<HTMLInputElement, {
-    label: string;
-    name: string;
-    value: string | null;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    type?: string;
-    borderClass?: string;
-    error?: string;
-}>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
+const InputField = forwardRef<HTMLInputElement, { label: string, name: string, value: string | null, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, type?: string, borderClass?: string, error?: string }>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
     <div>
         <label htmlFor={name} className="block text-sm font-medium text-gray-700">{label}:</label>
         <input
@@ -101,13 +93,12 @@ const InputField = forwardRef<HTMLInputElement, {
             value={type !== 'file' ? value || '' : undefined}
             onChange={onChange}
             required={name !== 'photo' && name !== 'researchPaper'}
-            className={`${borderClass} ${error ? 'error-class' : ''}`}
+            className={${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}}
             ref={ref} // Attach the ref
         />
-        {error && <p className="error-class">{error}</p>}
+        {error && <p className={styles.errorText}>{error}</p>}
     </div>
 ));
-
 
 InputField.displayName = 'InputField';
 
@@ -121,7 +112,7 @@ const SelectField: React.FC<{ label: string, name: string, value: string, onChan
             value={value}
             onChange={onChange}
             required
-            className={`${styles.inputField} ${borderClass}`}
+            className={${styles.inputField} ${borderClass}}
         >
             <option value="" disabled>Select {label.toLowerCase()}</option>
             {options.map((option) => (
@@ -130,7 +121,6 @@ const SelectField: React.FC<{ label: string, name: string, value: string, onChan
         </select>
     </div>
 );
-
 
 // Main registration form component
 const RegistrationForm: React.FC = () => {
@@ -148,23 +138,22 @@ const RegistrationForm: React.FC = () => {
     const photoInputRef = React.useRef<HTMLInputElement | null>(null); // Add ref for photo input
 
     // Handle college search and filter matches
-   const handleSearchCollege = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchValue = e.target.value;
-    setSearchCollege(searchValue);
+    const handleSearchCollege = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const searchValue = e.target.value;
+        setSearchCollege(searchValue);
 
-    if (searchValue.length > 2) {
-        try {
-            const response = await axios.get(`/api/colleges/search?q=${searchValue}`);
-            setColleges(response.data);
-            setCollegeWarning('');
-        } catch (error) {
-            console.error('Error searching colleges:', error);
+        if (searchValue.length > 2) {
+            try {
+                const response = await axios.get(/api/colleges/search?q=${searchValue});
+                setColleges(response.data);
+                setCollegeWarning('');
+            } catch (error) {
+                console.error('Error searching colleges:', error);
+            }
         }
-    }
 
-    handleChange(e);
-};
-
+        handleChange(e);
+    };
 
     // Handle college selection, including "Other"
     const handleSelectCollege = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -297,7 +286,7 @@ const RegistrationForm: React.FC = () => {
 
   {/* Banner Text */}
   <div className={styles.bannerText}>
-    <h1>Visvesvaraya Technological University Welcomes with Collaboration with <br/>
+    <h1>Visvesvaraya Technological University welcomes with Colaboration with <br/>
         The International Institute of Medical Science & Technology Council <br/>
         for Mega Event</h1>
     <p>
@@ -422,8 +411,8 @@ const RegistrationForm: React.FC = () => {
 
                     {/* Display the error message below the register button */}
                     {collegeWarning && (
-    <p className={`${styles.warningMessage} ${styles.errorText}`}>{collegeWarning}</p>
-)}
+                        <p className={${styles.warningMessage} ${styles.errorText}}>{collegeWarning}</p>
+                    )}
 
                     {/* Success message after submission */}
                     {submissionStatus === 'success' && (
