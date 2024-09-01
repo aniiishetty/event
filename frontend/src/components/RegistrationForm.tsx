@@ -422,8 +422,8 @@ const RegistrationForm: React.FC = () => {
 
                     {/* Display the error message below the register button */}
                     {collegeWarning && (
-                        <p className={${styles.warningMessage} ${styles.errorText}}>{collegeWarning}</p>
-                    )}
+    <p className={`${styles.warningMessage} ${styles.errorText}`}>{collegeWarning}</p>
+)}
 
                     {/* Success message after submission */}
                     {submissionStatus === 'success' && (
