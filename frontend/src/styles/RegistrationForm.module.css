@@ -10,10 +10,7 @@
     @apply space-y-6;
   }
   
-  .inputField {
-    @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
-  }
-  
+ 
   /* src/styles/RegistrationForm.module.css */
 .buttonContainer {
   @apply flex space-x-4; /* Adds horizontal spacing between buttons */
@@ -390,7 +387,4 @@
   max-width: 350px; 
   height: auto; 
   margin-left: 20px; 
-}
-.inputField {
-    @apply mt-1 block w-full py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
 }
