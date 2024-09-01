@@ -84,7 +84,15 @@ const useTheForm = () => {
 };
 
 // Reusable input field component
-const InputField = forwardRef<HTMLInputElement, { label: string, name: string, value: string | null, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, type?: string, borderClass?: string, error?: string }>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
+const InputField = forwardRef<HTMLInputElement, {
+    label: string;
+    name: string;
+    value: string | null;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    type?: string;
+    borderClass?: string;
+    error?: string;
+}>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
     <div>
         <label htmlFor={name} className="block text-sm font-medium text-gray-700">{label}:</label>
         <input
@@ -93,12 +101,13 @@ const InputField = forwardRef<HTMLInputElement, { label: string, name: string, v
             value={type !== 'file' ? value || '' : undefined}
             onChange={onChange}
             required={name !== 'photo' && name !== 'researchPaper'}
-            className={${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}}
+            className={`${borderClass} ${error ? 'error-class' : ''}`}
             ref={ref} // Attach the ref
         />
-        {error && <p className={styles.errorText}>{error}</p>}
+        {error && <p className="error-class">{error}</p>}
     </div>
 ));
+
 
 InputField.displayName = 'InputField';
 
