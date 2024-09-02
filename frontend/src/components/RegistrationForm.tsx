@@ -51,35 +51,31 @@ const useTheForm = () => {
         committeeMember: '', // Add this line
     });
 
-    // Other logic remains the same...
-};
-
-
     const handleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+        const { name, value } = e.target;
 
-    if (name === 'designation') {
-        // Reset college fields when designation changes
-        setFormData((prevData) => ({
-            ...prevData,
-            collegeId: '',
-            collegeName: '',
-        }));
-    }
+        if (name === 'designation') {
+            // Reset college fields when designation changes
+            setFormData((prevData) => ({
+                ...prevData,
+                collegeId: '',
+                collegeName: '',
+            }));
+        }
 
-    if (name === 'photo' || name === 'researchPaper') {
-        const file = (e.target as HTMLInputElement).files?.[0] || null;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: file,
-        }));
-    } else {
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    }
-}, []);
+        if (name === 'photo' || name === 'researchPaper') {
+            const file = (e.target as HTMLInputElement).files?.[0] || null;
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: file,
+            }));
+        } else {
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
+    }, []);
 
     const resetForm = () => {
         setFormData({
@@ -92,11 +88,12 @@ const useTheForm = () => {
             photo: null,
             reason: '',
             researchPaper: null,
+            committeeMember: '', // Reset committee member as well
         });
+    };
 
     return { formData, handleChange, resetForm, setFormData };
 };
-
 // Reusable input field component
 const InputField = forwardRef<HTMLInputElement, { label: string, name: string, value: string | null, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, type?: string, borderClass?: string, error?: string }>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
     <div>
