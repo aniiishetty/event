@@ -5,8 +5,8 @@ import { College } from './College';
 interface RegistrationAttributes {
   id?: number;
   name: string;
-  designation: string;
-  collegeId: number;
+  designation: 'Chair Person' | 'Council Member' | 'Principal' | 'Vice-Chancellor';
+  collegeId?: number; // Made optional
   phone: string;
   email: string;
   photo?: Buffer;
@@ -14,13 +14,13 @@ interface RegistrationAttributes {
   researchPaper?: Buffer;
 }
 
-interface RegistrationCreationAttributes extends Optional<RegistrationAttributes, 'id' | 'photo' | 'researchPaper'> {}
+interface RegistrationCreationAttributes extends Optional<RegistrationAttributes, 'id' | 'photo' | 'researchPaper' | 'collegeId'> {}
 
 class Registration extends Model<RegistrationAttributes, RegistrationCreationAttributes> implements RegistrationAttributes {
   public id?: number;
   public name!: string;
-  public designation!: string;
-  public collegeId!: number;
+  public designation!: 'Chair Person' | 'Council Member' | 'Principal' | 'Vice-Chancellor';
+  public collegeId?: number;
   public phone!: string;
   public email!: string;
   public photo?: Buffer;
@@ -40,14 +40,14 @@ Registration.init(
       allowNull: false,
     },
     designation: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM('Chair Person', 'Council Member', 'Principal', 'Vice-Chancellor'),
       allowNull: false,
     },
     collegeId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true, // Made optional
       references: {
-        model: 'colleges', // Ensure this matches the table name exactly
+        model: 'colleges',
         key: 'id',
       },
     },
@@ -65,7 +65,11 @@ Registration.init(
       allowNull: true,
     },
     reason: {
-      type: DataTypes.ENUM('To know about International Internship', 'To know about Textbook', 'To present research paper'),
+      type: DataTypes.ENUM(
+        'To know about International Internship',
+        'To know about Textbook',
+        'To present research paper'
+      ),
       allowNull: false,
     },
     researchPaper: {
