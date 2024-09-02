@@ -1,5 +1,3 @@
-// src/hooks/useForm.ts
-
 import { useState, ChangeEvent } from 'react';
 
 const useForm = () => {
@@ -28,11 +26,30 @@ const useForm = () => {
         [name]: file
       }));
     } else {
-      // Handle text and select inputs
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value
-      }));
+      // Check if the designation is being changed
+      if (name === 'designation') {
+        let updatedData = {
+          ...formData,
+          [name]: value,
+        };
+
+        // Clear college fields if Vice-Chancellor or Council Member is selected
+        if (value === 'Vice-Chancellor' || value === 'Council Member') {
+          updatedData = {
+            ...updatedData,
+            collegeId: '',
+            newCollege: '',
+          };
+        }
+
+        setFormData(updatedData);
+      } else {
+        // Handle text and select inputs
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value
+        }));
+      }
     }
   };
 
