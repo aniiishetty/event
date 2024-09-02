@@ -93,7 +93,6 @@ const useTheForm = () => {
             reason: '',
             researchPaper: null,
         });
-    };
 
     return { formData, handleChange, resetForm, setFormData };
 };
