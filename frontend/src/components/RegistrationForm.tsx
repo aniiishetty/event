@@ -280,7 +280,7 @@ const RegistrationForm: React.FC = () => {
                     <InputField label="Name" name="name" value={formData.name} onChange={handleChange} />
                     <SelectField label="Designation" name="designation" value={formData.designation} onChange={handleChange} options={[
     { value: 'Principal', label: 'Principal' },
-    { value: 'Chairperson', label: 'Chairperson' },
+    { value: 'Chair Person', label: 'Chairperson' },
     { value: 'Vice-Chancellor', label: 'Vice-Chancellor' },
     { value: 'Council Member', label: 'Council Member' },
 ]} />
@@ -290,7 +290,7 @@ const RegistrationForm: React.FC = () => {
                     <div>
     <label htmlFor="collegeId" className="block text-sm font-medium text-gray-700">College/University:</label>
     {/* Show college select dropdown based on designation */}
-    {formData.designation === 'Principal' || formData.designation === 'Chairperson' ? (
+    {formData.designation === 'Principal' || formData.designation === 'Chair Person' ? (
         <>
             {colleges.length > 0 && (
                 <select
