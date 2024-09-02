@@ -347,15 +347,15 @@ const RegistrationForm: React.FC = () => {
         </div>
     ) : formData.designation === 'Council Member' && (
         <div>
-            <label htmlFor="committeeMember" className="block text-sm font-medium text-gray-700">Committee Member:</label>
-            <input
-                type="text"
-                name="committeeMember"
-                value={formData.committeeMember || ''}
-                onChange={handleChange}
-                placeholder="Enter committee member name"
-                className={styles.inputField}
-            />
+             <label htmlFor="committeeMember" className="block text-sm font-medium text-gray-700">Committee Member:</label>
+    <select
+      name="committeeMember"
+      value={formData.committeeMember}
+      onChange={handleChange}
+      className={styles.inputField}
+    >
+      <option value="Committee Member">Committee Member</option>
+    </select>
         </div>
     )}
 </div>
