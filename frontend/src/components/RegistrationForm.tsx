@@ -259,7 +259,22 @@ const RegistrationForm: React.FC = () => {
             {/* Banner Image with Overlay Text */}
             <div className={styles.bannerContainer}>
   {/* Logo Container */}
-  
+  <div className={styles.logoContainer}>
+    <div className={styles.vtuLogoContainer}>
+      <img
+        src="https://vtu.ac.in/wp-content/uploads/2020/10/vtu_logo.png"
+        alt="VTU Logo"
+        className={styles.vtuLogo}
+      />
+    </div>
+
+    <div className={styles.iimstcLogoContainer}>
+      <img
+        src="https://iimstc.com/wp-content/uploads/2021/10/log.png"
+        alt="IIMSTC Logo"
+        className={styles.iimstcLogo}
+      />
+    </div>
   </div>
 
   {/* Banner Image */}
@@ -270,9 +285,16 @@ const RegistrationForm: React.FC = () => {
   />
 
   {/* Banner Text */}
-               
-  
-
+  <div className={styles.bannerText}>
+    <h1>Visvesvaraya Technological University Welcomes with Collaboration with <br/>
+        The International Institute of Medical Science & Technology Council <br/>
+        for Mega Event</h1>
+    <p>
+      
+      Opportunities on Transforming India Through Youth Skill Development
+    </p>
+  </div>
+</div>
 
       <div className='img-container'>
       <img
