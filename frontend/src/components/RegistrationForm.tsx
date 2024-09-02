@@ -272,7 +272,7 @@ const RegistrationForm: React.FC = () => {
   {/* Banner Text */}
                
   
-</div>
+
 
       <div className='img-container'>
       <img
