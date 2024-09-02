@@ -41,9 +41,9 @@ export const registerUser = async (req: Request, res: Response) => {
 
     try {
         // Check if the photo size exceeds 1MB
-        if (photo && photo.size > 1 * 1024 * 1024) {
-            return res.status(400).json({ message: 'Photo size should not exceed 1MB' });
-        }
+       if (photo && photo.size > 5 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Photo size should not exceed 5 MB' });
+    }
 
         const photoBuffer = photo?.buffer;
 
