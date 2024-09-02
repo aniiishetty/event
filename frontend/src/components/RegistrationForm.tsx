@@ -3,7 +3,7 @@ import axios from 'axios';
 import styles from '../styles/RegistrationForm.module.css';
 import LoadingScreen from './LoadingScreen'; // Import the LoadingScreen component
 import useForm from '../hooks/useForm';
-import BannerSection from './BannerSection';
+import BannerSection from '../BannerSection';
 
 interface College {
     id: number;
