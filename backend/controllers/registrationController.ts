@@ -15,8 +15,8 @@ const upload = multer({
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: 'anishetty391@gmail.com',
-        pass: 'dbaqgxwsxmajreyt',
+        user: 'lmsad6123@gmail.com',
+        pass: 'xijxdmkupniydinn',
     },
 });
 
@@ -81,8 +81,8 @@ export const registerUser = async (req: Request, res: Response) => {
 
         // Send email to the representative with the user's photo and research paper if available
         const repMailOptions = {
-            from: 'anishetty391@gmail.com',
-            to: 'aniiivocal456@gmail.com',
+            from: 'lmsad6123@gmail.com',
+            to: 'lmsad6123@gmail.com',
             subject: 'New Registration',
             text: `
                 A new user has registered with the following details:
