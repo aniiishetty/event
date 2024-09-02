@@ -1,4 +1,4 @@
-import React from 'react'; // Import React
+import React, { forwardRef } from 'react';
 
 import axios from 'axios';
 import styles from '../styles/RegistrationForm.module.css';
