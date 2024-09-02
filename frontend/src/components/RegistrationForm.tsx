@@ -37,7 +37,7 @@ const useFetchColleges = () => {
 };
 
 // Custom hook to manage form data
-const useTheForm = () => {
+const useForm = () => {
     const [formData, setFormData] = React.useState({
         name: '',
         designation: '',
