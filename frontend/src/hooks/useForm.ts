@@ -1,20 +1,18 @@
 import { useState, ChangeEvent } from 'react';
 
-const useForm = () => {
-  // Define the initial state for form data
-  const [formData, setFormData] = useState({
-    name: '',
-    designation: '',
-    collegeId: '',
-    newCollege: '',
-    committeeMember: '', // New field added for Committee Member
-    phone: '',
-    email: '',
-    photo: null as File | null,
-    reason: '',
-    researchPaper: null as File | null
-  });
-
+const useTheForm = () => {
+    const [formData, setFormData] = React.useState({
+        name: '',
+        designation: '',
+        collegeId: '',
+        collegeName: '',
+        phone: '',
+        email: '',
+        photo: null as File | null,
+        reason: '',
+        researchPaper: null as File | null,
+        committeeMember: '', // Add committeeMember here
+    });
   // Handle changes to input fields
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = event.target;
