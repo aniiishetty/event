@@ -288,7 +288,7 @@ const RegistrationForm: React.FC = () => {
 
                     {/* College Search and Select */}
                     <div>
-    <label htmlFor="collegeId" className="block text-sm font-medium text-gray-700">College:</label>
+    <label htmlFor="collegeId" className="block text-sm font-medium text-gray-700">College/University:</label>
     {/* Show college select dropdown based on designation */}
     {formData.designation === 'Principal' || formData.designation === 'Chairperson' ? (
         <>
@@ -330,13 +330,13 @@ const RegistrationForm: React.FC = () => {
         </>
     ) : formData.designation === 'Vice-Chancellor' ? (
         <div>
-            <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College Name:</label>
+            <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College/University Name:</label>
             <input
                 type="text"
                 name="newCollege"
                 value={newCollege}
                 onChange={(e) => setNewCollege(e.target.value)}
-                placeholder="Enter new college name"
+                placeholder="Enter new College/University name"
                 className={styles.inputField}
             />
             <button
