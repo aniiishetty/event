@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from '../styles/RegistrationForm.module.css';
 import LoadingScreen from './LoadingScreen'; // Import the LoadingScreen component
 import useForm from '../hooks/useForm';
+import BannerSection from './BannerSection';
 
 interface College {
     id: number;
@@ -256,57 +257,9 @@ const RegistrationForm: React.FC = () => {
 
     return (
         <>
-            {/* Banner Image with Overlay Text */}
-            <div className={styles.bannerContainer}>
-  {/* Logo Container */}
-  <div className={styles.logoContainer}>
-    <div className={styles.vtuLogoContainer}>
-      <img
-        src="https://vtu.ac.in/wp-content/uploads/2020/10/vtu_logo.png"
-        alt="VTU Logo"
-        className={styles.vtuLogo}
-      />
+            <div className="App">
+      <BannerSection />
     </div>
-
-    <div className={styles.iimstcLogoContainer}>
-      <img
-        src="https://iimstc.com/wp-content/uploads/2021/10/log.png"
-        alt="IIMSTC Logo"
-        className={styles.iimstcLogo}
-      />
-    </div>
-  </div>
-
-  {/* Banner Image */}
-  <img
-    src="https://vtu.ac.in/wp-content/uploads/2019/08/vtu-banner-1a-1516x552.jpg"
-    alt="Event Banner"
-    className={styles.bannerImage}
-  />
-
-  {/* Banner Text */}
-  <div className={styles.bannerText}>
-    <h1>Visvesvaraya Technological University Welcomes with Collaboration with <br/>
-        The International Institute of Medical Science & Technology Council <br/>
-        for Mega Event</h1>
-    <p>
-      
-      Opportunities on Transforming India Through Youth Skill Development
-    </p>
-  </div>
-</div>
-
-      <div className='img-container'>
-      <img
-                        src="https://vectorseek.com/wp-content/uploads/2023/09/AICTE-Logo-Vector.svg-.png"
-                        alt="AICTE Logo"
-                        className={styles.aicteLogo}
-                    />
-                    <img
-                        src="https://presentations.gov.in/wp-content/uploads/2020/06/UGC-Preview.png?x31571"
-                        alt="UGC Logo"
-                        className={styles.ugcLogo}
-                    /></div>
 
             {/* Form Container */}
             <div className={styles.formContainer}>
