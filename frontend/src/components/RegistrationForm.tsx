@@ -299,7 +299,7 @@ const RegistrationForm: React.FC = () => {
                     onChange={handleSelectCollege}
                     className={styles.inputField} 
                 >
-                    <option value="">Select a college</option>
+                    <option value="">Select a college/University</option>
                     {colleges.map((college) => (
                         <option key={college.id} value={college.id}>{college.name}</option>
                     ))}
@@ -308,7 +308,7 @@ const RegistrationForm: React.FC = () => {
             )}
             {formData.collegeId === 'other' && (
                 <div>
-                    <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College Name:</label>
+                    <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College/University Name:</label>
                     <input
                         type="text"
                         name="newCollege"
