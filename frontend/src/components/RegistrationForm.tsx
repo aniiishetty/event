@@ -278,131 +278,125 @@ const RegistrationForm: React.FC = () => {
                 <h2 className={styles.heading}>Event Registration Form</h2>
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <InputField label="Name" name="name" value={formData.name} onChange={handleChange} />
-                    <SelectField label="Designation" name="designation" value={formData.designation} onChange={handleChange} options={[
-    { value: 'Principal', label: 'Principal' },
-    { value: 'Chair Person', label: 'Chairperson' },
-    { value: 'Vice-Chancellor', label: 'Vice-Chancellor' },
-    { value: 'Council Member', label: 'Council Member' },
-]} />
+    <SelectField label="Designation" name="designation" value={formData.designation} onChange={handleChange} options={[
+      { value: 'Principal', label: 'Principal' },
+      { value: 'Chair Person', label: 'Chairperson' },
+      { value: 'Vice-Chancellor', label: 'Vice-Chancellor' },
+      { value: 'Council Member', label: 'Council Member' },
+    ]} />
 
-
-                    {/* College Search and Select */}
-                    <div>
-    <label htmlFor="collegeId" className="block text-sm font-medium text-gray-700">College/University:</label>
-    {/* Show college select dropdown based on designation */}
+    {/* College Search and Select */}
     {formData.designation === 'Principal' || formData.designation === 'Chair Person' ? (
-        <>
-            {colleges.length > 0 && (
-                <select
-                    name="collegeId"
-                    value={formData.collegeId}
-                    onChange={handleSelectCollege}
-                    className={styles.inputField} 
-                >
-                    <option value="">Select a college/University</option>
-                    {colleges.map((college) => (
-                        <option key={college.id} value={college.id}>{college.name}</option>
-                    ))}
-                    <option value="other">Others</option>
-                </select>
-            )}
-            {formData.collegeId === 'other' && (
-                <div>
-                    <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College/University Name:</label>
-                    <input
-                        type="text"
-                        name="newCollege"
-                        value={newCollege}
-                        onChange={(e) => setNewCollege(e.target.value)}
-                        placeholder="Enter new college name"
-                        className={styles.inputField}
-                    />
-                    <button
-                        type="button"
-                        onClick={handleAddCollege}
-                        className={styles.button}
-                        disabled={addingCollege}
-                    >
-                        {addingCollege ? 'Adding...' : 'Submit'}
-                    </button>
-                </div>
-            )}
-        </>
-    ) : formData.designation === 'Vice-Chancellor' ? (
-        <div>
+      <div>
+        <label htmlFor="collegeId" className="block text-sm font-medium text-gray-700">College/University:</label>
+        {colleges.length > 0 && (
+          <select
+            name="collegeId"
+            value={formData.collegeId}
+            onChange={handleSelectCollege}
+            className={styles.inputField}
+          >
+            <option value="">Select a college/University</option>
+            {colleges.map((college) => (
+              <option key={college.id} value={college.id}>{college.name}</option>
+            ))}
+            <option value="other">Others</option>
+          </select>
+        )}
+        {formData.collegeId === 'other' && (
+          <div>
             <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College/University Name:</label>
             <input
-                type="text"
-                name="newCollege"
-                value={newCollege}
-                onChange={(e) => setNewCollege(e.target.value)}
-                placeholder="Enter new College/University name"
-                className={styles.inputField}
+              type="text"
+              name="newCollege"
+              value={newCollege}
+              onChange={(e) => setNewCollege(e.target.value)}
+              placeholder="Enter new college name"
+              className={styles.inputField}
             />
             <button
-                type="button"
-                onClick={handleAddCollege}
-                className={styles.button}
-                disabled={addingCollege}
+              type="button"
+              onClick={handleAddCollege}
+              className={styles.button}
+              disabled={addingCollege}
             >
-                {addingCollege ? 'Adding...' : 'Submit'}
+              {addingCollege ? 'Adding...' : 'Submit'}
             </button>
-        </div>
+          </div>
+        )}
+      </div>
+    ) : formData.designation === 'Vice-Chancellor' ? (
+      <div>
+        <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College/University Name:</label>
+        <input
+          type="text"
+          name="newCollege"
+          value={newCollege}
+          onChange={(e) => setNewCollege(e.target.value)}
+          placeholder="Enter new College/University name"
+          className={styles.inputField}
+        />
+        <button
+          type="button"
+          onClick={handleAddCollege}
+          className={styles.button}
+          disabled={addingCollege}
+        >
+          {addingCollege ? 'Adding...' : 'Submit'}
+        </button>
+      </div>
     ) : formData.designation === 'Council Member' && (
-        <div>
-             <label htmlFor="committeeMember" className="block text-sm font-medium text-gray-700">Committee Member:</label>
-    <select
-      name="committeeMember"
-      value={formData.committeeMember}
-      onChange={handleChange}
-      className={styles.inputField}
-    >
-      <option value="Committee Member">Committee Member</option>
-    </select>
-        </div>
+      <div>
+        <label htmlFor="committeeMember" className="block text-sm font-medium text-gray-700">Committee Member:</label>
+        <select
+          name="committeeMember"
+          value={formData.committeeMember}
+          onChange={handleChange}
+          className={styles.inputField}
+        >
+          <option value="Committee Member">Committee Member</option>
+        </select>
+      </div>
     )}
-</div>
 
+    <InputField label="Phone" name="phone" value={formData.phone} onChange={handleChange} />
 
-                    <InputField label="Phone" name="phone" value={formData.phone} onChange={handleChange} />
+    <InputField
+      label="Email"
+      name="email"
+      value={formData.email}
+      onChange={handleChange}
+      type="email"
+      borderClass={emailBorderClass} // Only this field uses emailBorderClass
+    />
 
-                    <InputField
-                        label="Email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        type="email"
-                        borderClass={emailBorderClass} // Only this field uses emailBorderClass
-                    />
+    <InputField
+      label="Photo"
+      name="photo"
+      value={null}
+      onChange={handleChange}
+      type="file"
+      ref={photoInputRef} // Assign the ref here
+    />
 
-<InputField
-    label="Photo"
-    name="photo"
-    value={null}
-    onChange={handleChange}
-    type="file"
-    ref={photoInputRef} // Assign the ref here
-/>
-
-
-                    <div>
-                        <label htmlFor="reason" className="block text-sm font-medium text-gray-700">Interested in :</label>
-                        <select
-                            name="reason"
-                            value={formData.reason}
-                            onChange={handleChange}
-                            required
-                            className={styles.inputField}
-                        >
-                            <option value="" disabled>Select reason</option>
-                            <option value="To know about International Internship">To know about International Internship</option>
-                            <option value="To know about Textbook">To know about Textbook</option>
-                            <option value="To present research paper">To present research paper</option>
-                        </select>
-                    </div>
-                    {formData.reason === 'To present research paper' && (
-                        <InputField label="Research Paper" name="researchPaper" value={null} onChange={handleChange} type="file" />
-                    )}
+    <div>
+      <label htmlFor="reason" className="block text-sm font-medium text-gray-700">Interested in :</label>
+      <select
+        name="reason"
+        value={formData.reason}
+        onChange={handleChange}
+        required
+        className={styles.inputField}
+      >
+        <option value="" disabled>Select reason</option>
+        <option value="To know about International Internship">To know about International Internship</option>
+        <option value="To know about Textbook">To know about Textbook</option>
+        <option value="To present research paper">To present research paper</option>
+      </select>
+    </div>
+    {formData.reason === 'To present research paper' && (
+      <InputField label="Research Paper" name="researchPaper" value={null} onChange={handleChange} type="file" />
+    )}
 
 <div className={styles.buttonContainer}>
             <button type="submit" className={styles.button} disabled={isSubmitting}>Register</button>
