@@ -1,6 +1,6 @@
 import { useState, ChangeEvent } from 'react';
 
-const useTheForm = () => {
+const useForm = () => {
     const [formData, setFormData] = React.useState({
         name: '',
         designation: '',
