@@ -37,7 +37,7 @@ const useFetchColleges = () => {
 };
 
 // Custom hook to manage form data
-const useForm = () => {
+const useTheForm = () => {
     const [formData, setFormData] = React.useState({
         name: '',
         designation: '',
@@ -48,7 +48,12 @@ const useForm = () => {
         photo: null as File | null,
         reason: '',
         researchPaper: null as File | null,
+        committeeMember: '', // Add this line
     });
+
+    // Other logic remains the same...
+};
+
 
     const handleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
