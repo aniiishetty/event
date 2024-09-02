@@ -51,21 +51,30 @@ const useTheForm = () => {
     });
 
     const handleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+    const { name, value } = e.target;
 
-        if (name === 'photo' || name === 'researchPaper') {
-            const file = (e.target as HTMLInputElement).files?.[0] || null;
-            setFormData((prevData) => ({
-                ...prevData,
-                [name]: file,
-            }));
-        } else {
-            setFormData((prevData) => ({
-                ...prevData,
-                [name]: value,
-            }));
-        }
-    }, []);
+    if (name === 'designation') {
+        // Reset college fields when designation changes
+        setFormData((prevData) => ({
+            ...prevData,
+            collegeId: '',
+            collegeName: '',
+        }));
+    }
+
+    if (name === 'photo' || name === 'researchPaper') {
+        const file = (e.target as HTMLInputElement).files?.[0] || null;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: file,
+        }));
+    } else {
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    }
+}, []);
 
     const resetForm = () => {
         setFormData({
@@ -267,49 +276,90 @@ const RegistrationForm: React.FC = () => {
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <InputField label="Name" name="name" value={formData.name} onChange={handleChange} />
                     <SelectField label="Designation" name="designation" value={formData.designation} onChange={handleChange} options={[
-                        { value: 'Principal', label: 'Principal' },
-                        { value: 'Chairperson', label: 'Chairperson' }
-                    ]} />
+    { value: 'Principal', label: 'Principal' },
+    { value: 'Chairperson', label: 'Chairperson' },
+    { value: 'Vice-Chancellor', label: 'Vice-Chancellor' },
+    { value: 'Council Member', label: 'Council Member' },
+]} />
+
 
                     {/* College Search and Select */}
                     <div>
-                        <label htmlFor="collegeId" className="block text-sm font-medium text-gray-700">College:</label>
-                        {colleges.length > 0 && (
-                            <select
-                                name="collegeId"
-                                value={formData.collegeId}
-                                onChange={handleSelectCollege}
-                                className={styles.inputField} // Removed collegeBorderClass
-                            >
-                                <option value="">Select a college</option>
-                                {colleges.map((college) => (
-                                    <option key={college.id} value={college.id}>{college.name}</option>
-                                ))}
-                                <option value="other">Others</option>
-                            </select>
-                        )}
-                        {formData.collegeId === 'other' && (
-                            <div>
-                                <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College Name:</label>
-                                <input
-                                    type="text"
-                                    name="newCollege"
-                                    value={newCollege}
-                                    onChange={(e) => setNewCollege(e.target.value)}
-                                    placeholder="Enter new college name"
-                                    className={styles.inputField}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleAddCollege}
-                                    className={styles.button}
-                                    disabled={addingCollege}
-                                >
-                                    {addingCollege ? 'Adding...' : 'Submit'}
-                                </button>
-                            </div>
-                        )}
-                    </div>
+    <label htmlFor="collegeId" className="block text-sm font-medium text-gray-700">College:</label>
+    {/* Show college select dropdown based on designation */}
+    {formData.designation === 'Principal' || formData.designation === 'Chairperson' ? (
+        <>
+            {colleges.length > 0 && (
+                <select
+                    name="collegeId"
+                    value={formData.collegeId}
+                    onChange={handleSelectCollege}
+                    className={styles.inputField} 
+                >
+                    <option value="">Select a college</option>
+                    {colleges.map((college) => (
+                        <option key={college.id} value={college.id}>{college.name}</option>
+                    ))}
+                    <option value="other">Others</option>
+                </select>
+            )}
+            {formData.collegeId === 'other' && (
+                <div>
+                    <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College Name:</label>
+                    <input
+                        type="text"
+                        name="newCollege"
+                        value={newCollege}
+                        onChange={(e) => setNewCollege(e.target.value)}
+                        placeholder="Enter new college name"
+                        className={styles.inputField}
+                    />
+                    <button
+                        type="button"
+                        onClick={handleAddCollege}
+                        className={styles.button}
+                        disabled={addingCollege}
+                    >
+                        {addingCollege ? 'Adding...' : 'Submit'}
+                    </button>
+                </div>
+            )}
+        </>
+    ) : formData.designation === 'Vice-Chancellor' ? (
+        <div>
+            <label htmlFor="newCollege" className="block text-sm font-medium text-gray-700">Enter College Name:</label>
+            <input
+                type="text"
+                name="newCollege"
+                value={newCollege}
+                onChange={(e) => setNewCollege(e.target.value)}
+                placeholder="Enter new college name"
+                className={styles.inputField}
+            />
+            <button
+                type="button"
+                onClick={handleAddCollege}
+                className={styles.button}
+                disabled={addingCollege}
+            >
+                {addingCollege ? 'Adding...' : 'Submit'}
+            </button>
+        </div>
+    ) : formData.designation === 'Council Member' && (
+        <div>
+            <label htmlFor="committeeMember" className="block text-sm font-medium text-gray-700">Committee Member:</label>
+            <input
+                type="text"
+                name="committeeMember"
+                value={formData.committeeMember || ''}
+                onChange={handleChange}
+                placeholder="Enter committee member name"
+                className={styles.inputField}
+            />
+        </div>
+    )}
+</div>
+
 
                     <InputField label="Phone" name="phone" value={formData.phone} onChange={handleChange} />
 
