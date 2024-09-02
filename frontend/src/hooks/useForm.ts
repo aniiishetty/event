@@ -7,6 +7,7 @@ const useForm = () => {
     designation: '',
     collegeId: '',
     newCollege: '',
+    committeeMember: '', // New field added for Committee Member
     phone: '',
     email: '',
     photo: null as File | null,
@@ -33,12 +34,13 @@ const useForm = () => {
           [name]: value,
         };
 
-        // Clear college fields if Vice-Chancellor or Council Member is selected
+        // Clear college fields and committeeMember if Vice-Chancellor or Council Member is selected
         if (value === 'Vice-Chancellor' || value === 'Council Member') {
           updatedData = {
             ...updatedData,
             collegeId: '',
             newCollege: '',
+            committeeMember: value === 'Council Member' ? '' : formData.committeeMember, // Clear committeeMember only if Council Member is selected
           };
         }
 
@@ -60,6 +62,7 @@ const useForm = () => {
       designation: '',
       collegeId: '',
       newCollege: '',
+      committeeMember: '', // Reset committeeMember field
       phone: '',
       email: '',
       photo: null,
