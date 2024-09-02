@@ -285,6 +285,15 @@ const RegistrationForm: React.FC = () => {
   />
 
   {/* Banner Text */}
+                <div className={styles.bannerText}>
+    <h1>Visvesvaraya Technological University welcomes with Colaboration with <br/>
+        The International Institute of Medical Science & Technology Council <br/>
+        for Mega Event</h1>
+    <p>
+      
+      Opportunities on Transforming India Through Youth Skill Development
+    </p>
+  </div>
   
 </div>
 
