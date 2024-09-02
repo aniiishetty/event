@@ -11,12 +11,14 @@ export const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
-// Configure nodemailer with Gmail
+// Configure nodemailer with Hostinger
 const transporter = nodemailer.createTransport({
-    service: 'Gmail',
+    host: 'smtp.hostinger.com',
+    port: 465,
+    secure: true, // Use SSL/TLS
     auth: {
-        user: 'lmsad6123@gmail.com',
-        pass: 'xijxdmkupniydinn',
+        user: 'admin@iimstc.com', // Replace with your Hostinger email address
+        pass: 'Admin@iimstc123#', // Replace with your Hostinger email password
     },
 });
 
@@ -98,8 +100,8 @@ export const registerUser = async (req: Request, res: Response) => {
 
         // Prepare email content
         const mailOptions = {
-            from: 'lmsad6123@gmail.com',
-            to: 'lmsad6123@gmail.com',
+            from: 'admin@iimstc.com', // Replace with your Hostinger email address
+            to: 'admin@iimstc.com', // Replace with the recipient email address
             subject: 'New Registration',
             text: `A new user has registered with the following details:
 
