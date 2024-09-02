@@ -1,4 +1,5 @@
-import React, { forwardRef } from 'react';
+import React from 'react'; // Import React
+
 import axios from 'axios';
 import styles from '../styles/RegistrationForm.module.css';
 import LoadingScreen from './LoadingScreen'; // Import the LoadingScreen component
@@ -48,7 +49,7 @@ const useTheForm = () => {
         photo: null as File | null,
         reason: '',
         researchPaper: null as File | null,
-        committeeMember: '', // Add this line
+        committeeMember: '',
     });
 
     const handleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -88,12 +89,13 @@ const useTheForm = () => {
             photo: null,
             reason: '',
             researchPaper: null,
-            committeeMember: '', // Reset committee member as well
+            committeeMember: '',
         });
     };
 
     return { formData, handleChange, resetForm, setFormData };
 };
+
 // Reusable input field component
 const InputField = forwardRef<HTMLInputElement, { label: string, name: string, value: string | null, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, type?: string, borderClass?: string, error?: string }>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
     <div>
