@@ -36,8 +36,8 @@ export const handleFileSizeError = (err: any, req: Request, res: Response, next:
 };
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { name, designation, collegeId, phone, email, reason, collegeName: newCollegeName } = req.body;
-    const files = req.files as FileFields; // Cast to the FileFields interface
+    const { name, designation, collegeId, phone, email, reason, collegeName: newCollegeName, committeeMember } = req.body;
+    const files = req.files as FileFields; 
     const photo = files?.photo?.[0];
     const researchPaper = files?.researchPaper?.[0];
 
@@ -47,7 +47,6 @@ export const registerUser = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        // Validate designation and college information
         let college;
         if (designation === 'Chair Person' || designation === 'Principal') {
             if (!collegeId) {
@@ -61,36 +60,34 @@ export const registerUser = async (req: Request, res: Response) => {
             if (!newCollegeName) {
                 return res.status(400).json({ message: 'College name is required for Vice-Chancellor' });
             }
-            // Check if college already exists
             const existingCollege = await College.findOne({ where: { name: newCollegeName } });
             if (existingCollege) {
                 college = existingCollege;
             } else {
-                // Create new college
                 college = await College.create({ name: newCollegeName });
             }
         } else if (designation === 'Council Member') {
-            // No college information required
+            if (!committeeMember) {
+                return res.status(400).json({ message: 'Committee Member name is required for Council Member' });
+            }
         } else {
             return res.status(400).json({ message: 'Invalid designation' });
         }
 
-        // Check if the email already exists
         const existingUser = await Registration.findOne({ where: { email } });
         if (existingUser) {
             return res.status(400).json({ message: 'Email already exists' });
         }
 
-        // Validate photo size
         if (photo && photo.size > 5 * 1024 * 1024) {
             return res.status(400).json({ message: 'Photo size should not exceed 5 MB' });
         }
 
-        // Create new registration
         const newRegistration = await Registration.create({
             name,
             designation,
-            collegeId: college?.id,
+            collegeId: designation === 'Council Member' ? null : college?.id,
+            committeeMember: designation === 'Council Member' ? committeeMember : null,
             phone,
             email,
             photo: photo?.buffer,
@@ -98,16 +95,15 @@ export const registerUser = async (req: Request, res: Response) => {
             researchPaper: researchPaper?.buffer
         });
 
-        // Prepare email content
         const mailOptions = {
-            from: 'admin@iimstc.com', // Replace with your Hostinger email address
-            to: 'admin@iimstc.com', // Replace with the recipient email address
+            from: 'admin@iimstc.com',
+            to: 'admin@iimstc.com',
             subject: 'New Registration',
             text: `A new user has registered with the following details:
 
 Name: ${name}
 Designation: ${designation}
-College: ${college ? college.name : 'N/A'}
+${designation === 'Council Member' ? `Committee Member: ${committeeMember}` : `College: ${college ? college.name : 'N/A'}`}
 Phone: ${phone}
 Email: ${email}
 Reason: ${reason}`,
@@ -125,7 +121,6 @@ Reason: ${reason}`,
             ]
         };
 
-        // Send email notification
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error('Error sending email:', error);
@@ -140,3 +135,4 @@ Reason: ${reason}`,
         res.status(500).json({ error: 'Server error' });
     }
 };
+
