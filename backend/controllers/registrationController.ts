@@ -86,7 +86,7 @@ export const registerUser = async (req: Request, res: Response) => {
         const newRegistration = await Registration.create({
             name,
             designation,
-            collegeId: designation === 'Council Member' ? null : college?.id,
+            collegeId: designation === 'Council Member' ? null : college?.id ?? undefined,
             committeeMember: designation === 'Council Member' ? committeeMember : null,
             phone,
             email,
