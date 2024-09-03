@@ -57,28 +57,26 @@ const useTheForm = () => {
     const { name, value } = e.target;
 
     if (name === 'designation') {
-      // Reset fields when designation changes
-      setFormData((prevData) => ({
-        ...prevData,
-        collegeId: '',
-        collegeName: '',
-        committeeMember: '', // Reset committeeMember on designation change
-      }));
-    }
-
-    if (name === 'photo' || name === 'researchPaper') {
-      const file = (e.target as HTMLInputElement).files?.[0] || null;
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: file,
-      }));
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+            collegeId: '',
+            collegeName: '',
+            committeeMember: value === 'Council Member' ? '' : prevData.committeeMember,
+        }));
+    } else if (name === 'photo' || name === 'researchPaper') {
+        const file = (e.target as HTMLInputElement).files?.[0] || null;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: file,
+        }));
     } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
     }
-  }, []);
+}, []);
 
   const resetForm = () => {
     setFormData({
