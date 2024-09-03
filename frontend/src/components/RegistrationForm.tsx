@@ -170,19 +170,19 @@ const RegistrationForm: React.FC = () => {
 
     // Handle college selection, including "Other"
     const handleSelectCollege = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedValue = e.target.value;
+  const selectedValue = e.target.value;
 
-        if (selectedValue === 'other') {
-            setNewCollege('');
-        }
+  if (selectedValue === 'other') {
+    setNewCollege('');
+  }
 
-        handleChange({ target: { name: 'collegeId', value: selectedValue } } as React.ChangeEvent<HTMLInputElement>);
-        const selectedCollege = colleges.find((college) => college.id === parseInt(selectedValue));
+  handleChange({ target: { name: 'collegeId', value: selectedValue } } as React.ChangeEvent<HTMLInputElement>);
+  const selectedCollege = colleges.find((college) => college.id === parseInt(selectedValue));
 
-        if (selectedCollege) {
-            handleChange({ target: { name: 'collegeName', value: selectedCollege.name } } as React.ChangeEvent<HTMLInputElement>);
-        }
-    };
+  if (selectedCollege) {
+    handleChange({ target: { name: 'collegeName', value: selectedCollege.name } } as React.ChangeEvent<HTMLInputElement>);
+  }
+};
 
     // Handle adding a new college
     const handleAddCollege = async () => {
@@ -210,49 +210,49 @@ const RegistrationForm: React.FC = () => {
 
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true); // Set submitting state
-    
-        const formDataToSend = new FormData();
-        Object.entries(formData).forEach(([key, value]) => {
-            if (value) {
-                formDataToSend.append(key, value as any);
-            }
-        });
-    
-        try {
-            const response = await axios.post('/api/registrations/register', formDataToSend, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-            setSubmissionStatus('success'); // Update submission status
-            resetForm();
-            setEmailBorderClass(''); // Reset email border on successful submission
-            setCollegeWarning(''); // Reset any college warnings on successful submission
-    
-            // Reset photo input value
-            if (photoInputRef.current) {
-                photoInputRef.current.value = '';
-            }
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data.message || 'An error occurred. Please try again.';
-    
-                // Check if the error is related to the email field
-                if (errorMessage.toLowerCase().includes('email')) {
-                    setEmailBorderClass(styles.errorBorder); // Set red border for email field
-                    setCollegeWarning(errorMessage); // Show error message below register button
-                } else {
-                    setEmailBorderClass(''); // Reset email border if the error is not related to email
-                    setCollegeWarning(errorMessage); // Show error message for other issues
-                }
-            } else {
-                console.error('Error:', error);
-                setCollegeWarning('An unexpected error occurred. Please try again.');
-            }
-        } finally {
-            setIsSubmitting(false); // Reset submitting state
-        }
-    };
+  e.preventDefault();
+  setIsSubmitting(true); // Set submitting state
+
+  const formDataToSend = new FormData();
+  Object.entries(formData).forEach(([key, value]) => {
+    if (value) {
+      formDataToSend.append(key, value as any);
+    }
+  });
+
+  try {
+    const response = await axios.post('/api/registrations/register', formDataToSend, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    setSubmissionStatus('success'); // Update submission status
+    resetForm();
+    setEmailBorderClass(''); // Reset email border on successful submission
+    setCollegeWarning(''); // Reset any college warnings on successful submission
+
+    // Reset photo input value
+    if (photoInputRef.current) {
+      photoInputRef.current.value = '';
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data.message || 'An error occurred. Please try again.';
+
+      // Check if the error is related to the email field
+      if (errorMessage.toLowerCase().includes('email')) {
+        setEmailBorderClass(styles.errorBorder); // Set red border for email field
+        setCollegeWarning(errorMessage); // Show error message below register button
+      } else {
+        setEmailBorderClass(''); // Reset email border if the error is not related to email
+        setCollegeWarning(errorMessage); // Show error message for other issues
+      }
+    } else {
+      console.error('Error:', error);
+      setCollegeWarning('An unexpected error occurred. Please try again.');
+    }
+  } finally {
+    setIsSubmitting(false); // Reset submitting state
+  }
+};
     
     
     // Determine border class based on form state
@@ -346,19 +346,18 @@ const RegistrationForm: React.FC = () => {
         </button>
       </div>
     ) : formData.designation === 'Council Member' && (
-      <div>
-        <label htmlFor="committeeMember" className="block text-sm font-medium text-gray-700">Council Member:</label>
-        <select
-          name="committeeMember"
-          value={formData.committeeMember}
-          onChange={handleChange}
-          className={styles.inputField}
-        >
-          <option value="Committee Member">IIMSTC Council Member</option>
-        </select>
-      </div>
-    )}
-
+  <div>
+    <label htmlFor="committeeMember" className="block text-sm font-medium text-gray-700">Committee Member:</label>
+    <select
+      name="committeeMember"
+      value={formData.committeeMember}
+      onChange={handleChange}
+      className={styles.inputField}
+    >
+      <option value="IIMSTC Council Member">IIMSTC Council Member</option>
+    </select>
+  </div>
+)}
     <InputField label="Phone" name="phone" value={formData.phone} onChange={handleChange} />
 
     <InputField
