@@ -70,6 +70,7 @@ export const registerUser = async (req: Request, res: Response) => {
             if (!committeeMember) {
                 return res.status(400).json({ message: 'Committee Member name is required for Council Member' });
             }
+            // No college is required for Council Member
         } else {
             return res.status(400).json({ message: 'Invalid designation' });
         }
@@ -84,16 +85,16 @@ export const registerUser = async (req: Request, res: Response) => {
         }
 
         const newRegistration = await Registration.create({
-    name,
-    designation,
-    collegeId: designation === 'Council Member' ? null : college?.id ?? undefined,
-    committeeMember: designation === 'Council Member' ? committeeMember ?? null : null,
-    phone,
-    email,
-    photo: photo?.buffer,
-    reason,
-    researchPaper: researchPaper?.buffer
-});
+            name,
+            designation,
+            collegeId: designation === 'Council Member' ? null : college?.id,
+            committeeMember: designation === 'Council Member' ? committeeMember : null,
+            phone,
+            email,
+            photo: photo?.buffer,
+            reason,
+            researchPaper: researchPaper?.buffer
+        });
 
         const mailOptions = {
             from: 'admin@iimstc.com',
