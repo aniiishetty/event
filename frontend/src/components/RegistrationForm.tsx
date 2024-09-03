@@ -443,8 +443,15 @@ console.log(formDataObject);
         rel="noopener noreferrer"
     >
         admin@iimstc.com
+    </a>. For technical assistance, call us at{' '}
+    <a 
+        href="tel:+916362177613" 
+        className="text-blue-500 hover:underline"
+    >
+        +916362177613
     </a>.
 </p>
+
 
             </div>
         </>
