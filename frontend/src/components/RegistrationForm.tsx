@@ -434,12 +434,18 @@ console.log(formDataObject);
                         </div>
                     )}
                 </form>
-                <p style={{ marginTop: '1rem', textAlign: 'center' }}>
+               <p style={{ marginTop: '1rem', textAlign: 'center' }}>
     For any queries, please contact{' '}
-    <a href="mailto:admin@iimstc.com" style={{ color: '#007bff', textDecoration: 'underline' }}>
+    <a 
+        href="https://mail.google.com/mail/?view=cm&fs=1&to=admin@iimstc.com" 
+        className="text-blue-500 hover:underline" 
+        target="_blank" 
+        rel="noopener noreferrer"
+    >
         admin@iimstc.com
     </a>.
 </p>
+
             </div>
         </>
     );
