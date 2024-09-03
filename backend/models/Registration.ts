@@ -6,15 +6,16 @@ interface RegistrationAttributes {
   id?: number;
   name: string;
   designation: 'Chair Person' | 'Council Member' | 'Principal' | 'Vice-Chancellor';
-  collegeId?: number; // Made optional
+  collegeId?: number; 
   phone: string;
   email: string;
   photo?: Buffer;
   reason: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
   researchPaper?: Buffer;
+  committeeMember?: string | null; // New field added
 }
 
-interface RegistrationCreationAttributes extends Optional<RegistrationAttributes, 'id' | 'photo' | 'researchPaper' | 'collegeId'> {}
+interface RegistrationCreationAttributes extends Optional<RegistrationAttributes, 'id' | 'photo' | 'researchPaper' | 'collegeId' | 'committeeMember'> {}
 
 class Registration extends Model<RegistrationAttributes, RegistrationCreationAttributes> implements RegistrationAttributes {
   public id?: number;
@@ -26,6 +27,7 @@ class Registration extends Model<RegistrationAttributes, RegistrationCreationAtt
   public photo?: Buffer;
   public reason!: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
   public researchPaper?: Buffer;
+  public committeeMember?: string | null; // New field added
 }
 
 Registration.init(
@@ -75,6 +77,10 @@ Registration.init(
     researchPaper: {
       type: DataTypes.BLOB('long'),
       allowNull: true,
+    },
+   committeeMember: {
+      type: DataTypes.STRING,
+      allowNull: true, // Optional or nullable
     },
   },
   {
