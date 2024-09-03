@@ -216,13 +216,23 @@ const RegistrationForm: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true); // Set submitting state
 
-    const formDataObject: { [key: string]: FormDataEntryValue } = {};
+   const formDataToSend = new FormData();
+// Populate formDataToSend with your data
+Object.entries(formData).forEach(([key, value]) => {
+    if (value) {
+        formDataToSend.append(key, value as any);
+    }
+});
+
+// Convert FormData to a regular object for logging
+const formDataObject: { [key: string]: FormDataEntryValue } = {};
 formDataToSend.forEach((value, key) => {
-  formDataObject[key] = value;
+    formDataObject[key] = value;
 });
 
 // Log the FormData entries
 console.log(formDataObject);
+
 
     try {
         const response = await axios.post('/api/registrations/register', formDataToSend, {
