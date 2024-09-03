@@ -47,7 +47,7 @@ export const registerUser = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        let college;
+        let college = null;
         if (designation === 'Chair Person' || designation === 'Principal') {
             if (!collegeId) {
                 return res.status(400).json({ message: 'College ID is required for this designation' });
@@ -135,4 +135,5 @@ Reason: ${reason}`,
         res.status(500).json({ error: 'Server error' });
     }
 };
+
 
