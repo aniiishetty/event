@@ -25,13 +25,13 @@ const sequelize = new Sequelize(
 sequelize.authenticate()
   .then(() => {
     console.log('Connection to the database has been established successfully.');
+    return sequelize.sync({ alter: true }); // Synchronize the database schema with the models
+  })
+  .then(() => {
+    console.log('Database synchronized successfully.');
   })
   .catch((error) => {
-    console.error('Unable to connect to the database:', error);
+    console.error('Unable to connect to the database or synchronize:', error);
   });
-
-// Synchronize the database schema with the models
-
-
 
 export default sequelize;
