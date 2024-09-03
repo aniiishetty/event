@@ -6,13 +6,13 @@ interface RegistrationAttributes {
   id?: number;
   name: string;
   designation: 'Chair Person' | 'Council Member' | 'Principal' | 'Vice-Chancellor';
-  collegeId?: number; 
+  collegeId?: number | null; // Changed type to number | null
   phone: string;
   email: string;
   photo?: Buffer;
   reason: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
   researchPaper?: Buffer;
-  committeeMember?: string | null; // New field added
+  committeeMember?: string | null; 
 }
 
 interface RegistrationCreationAttributes extends Optional<RegistrationAttributes, 'id' | 'photo' | 'researchPaper' | 'collegeId' | 'committeeMember'> {}
@@ -21,13 +21,13 @@ class Registration extends Model<RegistrationAttributes, RegistrationCreationAtt
   public id?: number;
   public name!: string;
   public designation!: 'Chair Person' | 'Council Member' | 'Principal' | 'Vice-Chancellor';
-  public collegeId?: number;
+  public collegeId?: number | null; // Changed type to number | null
   public phone!: string;
   public email!: string;
   public photo?: Buffer;
   public reason!: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
   public researchPaper?: Buffer;
-  public committeeMember?: string | null; // New field added
+  public committeeMember?: string | null; 
 }
 
 Registration.init(
@@ -47,7 +47,7 @@ Registration.init(
     },
     collegeId: {
       type: DataTypes.INTEGER,
-      allowNull: true, // Made optional
+      allowNull: true, 
       references: {
         model: 'colleges',
         key: 'id',
@@ -80,7 +80,7 @@ Registration.init(
     },
    committeeMember: {
       type: DataTypes.STRING,
-      allowNull: true, // Optional or nullable
+      allowNull: true, 
     },
   },
   {
