@@ -26,26 +26,23 @@ const useForm = () => {
                 [name]: file
             }));
         } else {
-            // Check if the designation is being changed
             if (name === 'designation') {
                 let updatedData = {
                     ...formData,
                     [name]: value,
                 };
 
-                // Clear college fields and committeeMember if Vice-Chancellor or Council Member is selected
                 if (value === 'Vice-Chancellor' || value === 'Council Member') {
                     updatedData = {
                         ...updatedData,
                         collegeId: '',
-                        collegeName: '', // Clear collegeName as well
-                        committeeMember: value === 'Council Member' ? '' : formData.committeeMember, // Clear committeeMember only if Council Member is selected
+                        collegeName: '',
+                        committeeMember: value === 'Council Member' ? '' : formData.committeeMember,
                     };
                 }
 
                 setFormData(updatedData);
             } else {
-                // Handle text and select inputs
                 setFormData((prevData) => ({
                     ...prevData,
                     [name]: value
@@ -60,7 +57,7 @@ const useForm = () => {
             name: '',
             designation: '',
             collegeId: '',
-            collegeName: '', // Reset collegeName field
+            collegeName: '',
             phone: '',
             email: '',
             photo: null,
