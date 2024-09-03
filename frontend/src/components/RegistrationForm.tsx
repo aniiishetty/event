@@ -76,8 +76,10 @@ const useTheForm = () => {
             [name]: value,
         }));
     }
-}, []);
 
+    // Log the updated form data
+    console.log('Updated form data:', formData);
+}, [formData]);
   const resetForm = () => {
     setFormData({
       name: '',
@@ -210,49 +212,54 @@ const RegistrationForm: React.FC = () => {
     };
 
     // Handle form submission
-    const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsSubmitting(true); // Set submitting state
+   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true); // Set submitting state
 
-  const formDataToSend = new FormData();
-  Object.entries(formData).forEach(([key, value]) => {
-    if (value) {
-      formDataToSend.append(key, value as any);
-    }
-  });
-
-  try {
-    const response = await axios.post('/api/registrations/register', formDataToSend, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+    const formDataToSend = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+        if (value) {
+            formDataToSend.append(key, value as any);
+        }
     });
-    setSubmissionStatus('success'); // Update submission status
-    resetForm();
-    setEmailBorderClass(''); // Reset email border on successful submission
-    setCollegeWarning(''); // Reset any college warnings on successful submission
 
-    // Reset photo input value
-    if (photoInputRef.current) {
-      photoInputRef.current.value = '';
+    // Log the FormData entries
+    for (let [key, value] of formDataToSend.entries()) {
+        console.log(`${key}: ${value}`);
     }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const errorMessage = error.response?.data.message || 'An error occurred. Please try again.';
 
-      // Check if the error is related to the email field
-      if (errorMessage.toLowerCase().includes('email')) {
-        setEmailBorderClass(styles.errorBorder); // Set red border for email field
-        setCollegeWarning(errorMessage); // Show error message below register button
-      } else {
-        setEmailBorderClass(''); // Reset email border if the error is not related to email
-        setCollegeWarning(errorMessage); // Show error message for other issues
-      }
-    } else {
-      console.error('Error:', error);
-      setCollegeWarning('An unexpected error occurred. Please try again.');
+    try {
+        const response = await axios.post('/api/registrations/register', formDataToSend, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        setSubmissionStatus('success'); // Update submission status
+        resetForm();
+        setEmailBorderClass(''); // Reset email border on successful submission
+        setCollegeWarning(''); // Reset any college warnings on successful submission
+
+        // Reset photo input value
+        if (photoInputRef.current) {
+            photoInputRef.current.value = '';
+        }
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            const errorMessage = error.response?.data.message || 'An error occurred. Please try again.';
+
+            // Check if the error is related to the email field
+            if (errorMessage.toLowerCase().includes('email')) {
+                setEmailBorderClass(styles.errorBorder); // Set red border for email field
+                setCollegeWarning(errorMessage); // Show error message below register button
+            } else {
+                setEmailBorderClass(''); // Reset email border if the error is not related to email
+                setCollegeWarning(errorMessage); // Show error message for other issues
+            }
+        } else {
+            console.error('Error:', error);
+            setCollegeWarning('An unexpected error occurred. Please try again.');
+        }
+    } finally {
+        setIsSubmitting(false); // Reset submitting state
     }
-  } finally {
-    setIsSubmitting(false); // Reset submitting state
-  }
 };
     
     
