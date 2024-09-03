@@ -38,63 +38,66 @@ const useFetchColleges = () => {
 };
 
 // Custom hook to manage form data
+// Update useTheForm hook to manage committeeMember field
 const useTheForm = () => {
-    const [formData, setFormData] = React.useState({
-        name: '',
-        designation: '',
+  const [formData, setFormData] = React.useState({
+    name: '',
+    designation: '',
+    collegeId: '',
+    collegeName: '',
+    phone: '',
+    email: '',
+    photo: null as File | null,
+    reason: '',
+    researchPaper: null as File | null,
+    committeeMember: '', // Initialize committeeMember
+  });
+
+  const handleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+
+    if (name === 'designation') {
+      // Reset fields when designation changes
+      setFormData((prevData) => ({
+        ...prevData,
         collegeId: '',
         collegeName: '',
-        phone: '',
-        email: '',
-        photo: null as File | null,
-        reason: '',
-        researchPaper: null as File | null,
-        committeeMember: '',
+        committeeMember: '', // Reset committeeMember on designation change
+      }));
+    }
+
+    if (name === 'photo' || name === 'researchPaper') {
+      const file = (e.target as HTMLInputElement).files?.[0] || null;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: file,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  }, []);
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      designation: '',
+      collegeId: '',
+      collegeName: '',
+      phone: '',
+      email: '',
+      photo: null,
+      reason: '',
+      researchPaper: null,
+      committeeMember: '', // Reset committeeMember
     });
+  };
 
-    const handleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-
-        if (name === 'designation') {
-            // Reset college fields when designation changes
-            setFormData((prevData) => ({
-                ...prevData,
-                collegeId: '',
-                collegeName: '',
-            }));
-        }
-
-        if (name === 'photo' || name === 'researchPaper') {
-            const file = (e.target as HTMLInputElement).files?.[0] || null;
-            setFormData((prevData) => ({
-                ...prevData,
-                [name]: file,
-            }));
-        } else {
-            setFormData((prevData) => ({
-                ...prevData,
-                [name]: value,
-            }));
-        }
-    }, []);
-
-    const resetForm = () => {
-        setFormData({
-            name: '',
-            designation: '',
-            collegeId: '',
-            collegeName: '',
-            phone: '',
-            email: '',
-            photo: null,
-            reason: '',
-            researchPaper: null,
-            committeeMember: '',
-        });
-    };
-
-    return { formData, handleChange, resetForm, setFormData };
+  return { formData, handleChange, resetForm, setFormData };
 };
+
 
 // Reusable input field component
 const InputField = forwardRef<HTMLInputElement, { label: string, name: string, value: string | null, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, type?: string, borderClass?: string, error?: string }>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
