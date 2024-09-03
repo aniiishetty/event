@@ -67,10 +67,7 @@ export const registerUser = async (req: Request, res: Response) => {
                 college = await College.create({ name: newCollegeName });
             }
         } else if (designation === 'Council Member') {
-            if (!committeeMember) {
-                return res.status(400).json({ message: 'Committee Member name is required for Council Member' });
-            }
-            // No college is required for Council Member
+            // No college or committeeMember validation needed
         } else {
             return res.status(400).json({ message: 'Invalid designation' });
         }
@@ -104,7 +101,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 Name: ${name}
 Designation: ${designation}
-${designation === 'Council Member' ? `Committee Member: ${committeeMember}` : `College: ${college ? college.name : 'N/A'}`}
+${designation === 'Council Member' ? `Committee Member: ${committeeMember || 'N/A'}` : `College: ${college ? college.name : 'N/A'}`}
 Phone: ${phone}
 Email: ${email}
 Reason: ${reason}`,
@@ -136,5 +133,3 @@ Reason: ${reason}`,
         res.status(500).json({ error: 'Server error' });
     }
 };
-
-
