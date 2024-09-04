@@ -383,20 +383,14 @@ console.log(formDataObject);
       borderClass={emailBorderClass} // Only this field uses emailBorderClass
     />
 
-   <div>
-  <label className="flex items-center">
-    Photo <span className="text-red-500">*</span>
-  </label>
-  <InputField
-    name="photo"
-    value={null}
-    onChange={handleChange}
-    type="file"
-    ref={photoInputRef} // Assign the ref here
-  />
-  <p className="text-black mt-2">This field is mandatory</p> {/* Optional styling */}
-</div>
-
+    <InputField
+      label="Photo"
+      name="photo"
+      value={null}
+      onChange={handleChange}
+      type="file"
+      ref={photoInputRef} // Assign the ref here
+    />
 
     <div>
       <label htmlFor="reason" className="block text-sm font-medium text-gray-700">Interested in :</label>
