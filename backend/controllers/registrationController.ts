@@ -47,6 +47,11 @@ export const registerUser = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
+        // Validate photo
+        if (!photo) {
+            return res.status(400).json({ message: 'Photo is required' });
+        }
+
         let college = null;
         if (designation === 'Chair Person' || designation === 'Principal') {
             if (!collegeId) {
@@ -77,7 +82,7 @@ export const registerUser = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Email already exists' });
         }
 
-        if (photo && photo.size > 5 * 1024 * 1024) {
+        if (photo.size > 5 * 1024 * 1024) {
             return res.status(400).json({ message: 'Photo size should not exceed 5 MB' });
         }
 
@@ -88,7 +93,7 @@ export const registerUser = async (req: Request, res: Response) => {
             committeeMember: designation === 'Council Member' ? committeeMember : null,
             phone,
             email,
-            photo: photo?.buffer,
+            photo: photo.buffer, // No change needed here
             reason,
             researchPaper: researchPaper?.buffer
         });
@@ -106,11 +111,11 @@ Phone: ${phone}
 Email: ${email}
 Reason: ${reason}`,
             attachments: [
-                ...(photo ? [{
+                {
                     filename: 'photo.jpg',
                     content: photo.buffer,
                     encoding: 'base64'
-                }] : []),
+                },
                 ...(researchPaper ? [{
                     filename: 'research_paper.pdf',
                     content: researchPaper.buffer,
