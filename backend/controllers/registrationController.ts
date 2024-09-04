@@ -1,135 +1,135 @@
-import { Request, Response, NextFunction } from 'express';
-import multer from 'multer';
-import { Registration } from '../models/Registration';
-import { College } from '../models/College';
-import nodemailer from 'nodemailer';
+import { Request, Response } from 'express';
+import { DailyLog } from '../models/dailyLog';
+import pdf from 'html-pdf';
 
-// Configure multer to handle file uploads
-const storage = multer.memoryStorage();
-export const upload = multer({ 
-    storage,
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-});
+export const generateDailyLogReport = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
 
-// Configure nodemailer with Hostinger
-const transporter = nodemailer.createTransport({
-    host: 'smtp.hostinger.com',
-    port: 465,
-    secure: true, // Use SSL/TLS
-    auth: {
-        user: 'admin@iimstc.com', // Replace with your Hostinger email address
-        pass: 'Admin@iimstc123#', // Replace with your Hostinger email password
-    },
-});
+  try {
+    const dailyLogs = await DailyLog.findAll({ where: { userId } });
 
-interface FileFields {
-    photo?: Express.Multer.File[];
-    researchPaper?: Express.Multer.File[];
-}
+    let htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Student's Daily Diary/Daily Log</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+          }
+          .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 10mm auto;
+            background: white;
+          }
+          .title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+          }
+          .subtitle {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #008080; 
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+          table, th, td {
+            border: 1px solid rgb(0, 0, 0, 1);
+          }
+          th, td {
+            padding: 6px;
+            text-align: left;
+          }
+          .signature {
+            margin-top: 20px;
+            font-weight: bold;
+          }
+        </style>
+      </head>
+      <body>`;
 
-// Middleware to handle file size errors
-export const handleFileSizeError = (err: any, req: Request, res: Response, next: NextFunction) => {
-    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
-        return res.status(400).json({ message: 'File size should not exceed 5MB' });
-    }
-    next(err); // Pass other errors to the default error handler
-};
+    dailyLogs.forEach((log) => {
+      htmlContent += `
+        <div class="page">
+          <img src="https://ams-multitenant-prod.s3.ap-south-1.amazonaws.com/egenius_multitenant-s3/c8d31366-60d7-4c2b-8c4f-627911d8bdb1/64e9946a-b35d-4d09-a41d-0db31520c180/b2ee9dbb-20d6-4530-ad92-6e3c1503244c/Event/meyRSHwnQWq9y1zTtcT1PeIimouTQ2ko7RwTVIik.png" alt="Description of the image" width="800px" /> 
+          <div class="subtitle">FORMAT 5: STUDENT'S DAILY DIARY/DAILY LOG</div>
+          <table>
+            <tr>
+              <th style="font-weight: normal;">DAY-${log.day}</th>
+              <th style="font-weight: normal;">${log.studentName}</th>
+              <th style="font-weight: normal;">DATE</th>
+              <th colspan="2">${log.date}</th>
+            </tr>
+            <tr>
+              <td>Time of arrival</td>
+              <td>&emsp;&emsp;&emsp;${log.arrivalTime}&emsp;&emsp;&emsp;&emsp;&emsp;</td>
+              <td>Time of Departure</td>
+              <td>&emsp;&emsp;&emsp;${log.departureTime}&emsp;&emsp;&emsp;&emsp;&emsp;</td>
+              <td>Remarks &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</td>
+            </tr>
+            <tr>
+              <td>Deptt./Division</td>
+              <td>${log.department}</td>
+              <td>Name of finished Product</td>
+              <td colspan="2">${log.finishedProduct}</td>
+            </tr>
+            <tr>
+              <td rowspan="4" colspan="1">Name of HOD/Supervisor With e-mail id</td>
+            </tr>
+            <tr>
+              <td>${log.hodName}</td>
+              <td colspan="4">${log.hodEmail}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td colspan="4"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td colspan="4"></td>
+            </tr>
+            <tr>
+              <td colspan="2">Main points of the day</td>
+              <td colspan="3">${log.mainPoints}</td>
+            </tr>
+            <tr>
+              <td colspan="5" style="height: 600px;">${log.details}</td>
+            </tr>
+          </table>
+          <div class="signature">
+            Signature of Industry Supervisor
+          </div><br>
+          <img src="https://ams-multitenant-prod.s3.ap-south-1.amazonaws.com/egenius_multitenant-s3/c8d31366-60d7-4c2b-8c4f-627911d8bdb1/64e9946a-b35d-4d09-a41d-0db31520c180/b2ee9dbb-20d6-4530-ad92-6e3c1503244c/Event/6wS3S3BJbgIoVIma1qtXCGj4NiDrzXWPYr7DsG9g.png" alt="Description of the image" width="800px" /> 
+        </div>`;
+    });
 
-export const registerUser = async (req: Request, res: Response) => {
-    const { name, designation, collegeId, phone, email, reason, collegeName: newCollegeName, committeeMember } = req.body;
-    const files = req.files as FileFields; 
-    const photo = files?.photo?.[0];
-    const researchPaper = files?.researchPaper?.[0];
+    htmlContent += `
+      </body>
+      </html>`;
 
-    try {
-        // Validate required fields
-        if (!name || !designation || !phone || !email || !reason) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
+    pdf.create(htmlContent, { format: 'A4', orientation: 'portrait', border: '10mm', timeout: 60000 }).toStream((err, stream) => {
+      if (err) {
+        console.error('Error generating PDF:', err);
+        return res.status(500).json({ success: false, message: 'Error generating daily log report' });
+      }
 
-        let college = null;
-        if (designation === 'Chair Person' || designation === 'Principal') {
-            if (!collegeId) {
-                return res.status(400).json({ message: 'College ID is required for this designation' });
-            }
-            college = await College.findByPk(collegeId);
-            if (!college) {
-                return res.status(400).json({ message: 'Invalid college ID' });
-            }
-        } else if (designation === 'Vice-Chancellor') {
-            if (!newCollegeName) {
-                return res.status(400).json({ message: 'College name is required for Vice-Chancellor' });
-            }
-            const existingCollege = await College.findOne({ where: { name: newCollegeName } });
-            if (existingCollege) {
-                college = existingCollege;
-            } else {
-                college = await College.create({ name: newCollegeName });
-            }
-        } else if (designation === 'Council Member') {
-            // No college or committeeMember validation needed
-        } else {
-            return res.status(400).json({ message: 'Invalid designation' });
-        }
+      res.setHeader('Content-type', 'application/pdf');
+      stream.pipe(res);
+    });
 
-        const existingUser = await Registration.findOne({ where: { email } });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email already exists' });
-        }
-
-        if (photo && photo.size > 5 * 1024 * 1024) {
-            return res.status(400).json({ message: 'Photo size should not exceed 5 MB' });
-        }
-
-        const newRegistration = await Registration.create({
-            name,
-            designation,
-            collegeId: designation === 'Council Member' ? null : college?.id,
-            committeeMember: designation === 'Council Member' ? committeeMember : null,
-            phone,
-            email,
-            photo: photo?.buffer,
-            reason,
-            researchPaper: researchPaper?.buffer
-        });
-
-        const mailOptions = {
-            from: 'admin@iimstc.com',
-            to: 'admin@iimstc.com',
-            subject: 'New Registration',
-            text: `A new user has registered with the following details:
-
-Name: ${name}
-Designation: ${designation}
-${designation === 'Council Member' ? `Committee Member: ${committeeMember || 'IIMSTC Council Member'}` : `College: ${college ? college.name : 'N/A'}`}
-Phone: ${phone}
-Email: ${email}
-Reason: ${reason}`,
-            attachments: [
-                ...(photo ? [{
-                    filename: 'photo.jpg',
-                    content: photo.buffer,
-                    encoding: 'base64'
-                }] : []),
-                ...(researchPaper ? [{
-                    filename: 'research_paper.pdf',
-                    content: researchPaper.buffer,
-                    encoding: 'base64'
-                }] : [])
-            ]
-        };
-
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error('Error sending email:', error);
-            } else {
-                console.log('Email sent:', info.response);
-            }
-        });
-
-        res.status(201).json({ message: 'User registered successfully', id: newRegistration.id });
-    } catch (err) {
-        console.error('Error registering user:', err);
-        res.status(500).json({ error: 'Server error' });
-    }
+  } catch (error) {
+    console.error('Error generating daily log report:', error);
+    res.status(500).json({ success: false, message: 'Error generating daily log report' });
+  }
 };
