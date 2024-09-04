@@ -101,7 +101,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 Name: ${name}
 Designation: ${designation}
-${designation === 'Council Member' ? `Committee Member: ${committeeMember || 'N/A'}` : `College: ${college ? college.name : 'N/A'}`}
+${designation === 'Council Member' ? `Committee Member: ${committeeMember || 'IIMSTC Council Member'}` : `College: ${college ? college.name : 'N/A'}`}
 Phone: ${phone}
 Email: ${email}
 Reason: ${reason}`,
