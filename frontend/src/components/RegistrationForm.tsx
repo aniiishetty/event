@@ -109,7 +109,7 @@ const InputField = forwardRef<HTMLInputElement, { label: string, name: string, v
             value={type !== 'file' ? value || '' : undefined}
             onChange={onChange}
             required={name !== 'photo' && name !== 'researchPaper'}
-            className={${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}}
+            className={`${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}`}
             ref={ref} // Attach the ref
         />
         {error && <p className={styles.errorText}>{error}</p>}
@@ -128,7 +128,7 @@ const SelectField: React.FC<{ label: string, name: string, value: string, onChan
             value={value}
             onChange={onChange}
             required
-            className={${styles.inputField} ${borderClass}}
+            className={`${styles.inputField} ${borderClass}`}
         >
             <option value="" disabled>Select {label.toLowerCase()}</option>
             {options.map((option) => (
@@ -160,7 +160,7 @@ const RegistrationForm: React.FC = () => {
 
         if (searchValue.length > 2) {
             try {
-                const response = await axios.get(/api/colleges/search?q=${searchValue});
+                const response = await axios.get(`/api/colleges/search?q=${searchValue}`);
                 setColleges(response.data);
                 setCollegeWarning('');
             } catch (error) {
@@ -424,7 +424,7 @@ console.log(formDataObject);
 
                     {/* Display the error message below the register button */}
                     {collegeWarning && (
-                        <p className={${styles.warningMessage} ${styles.errorText}}>{collegeWarning}</p>
+                        <p className={`${styles.warningMessage} ${styles.errorText}`}>{collegeWarning}</p>
                     )}
 
                     {/* Success message after submission */}
