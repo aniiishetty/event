@@ -108,7 +108,7 @@ const InputField = forwardRef<HTMLInputElement, { label: string, name: string, v
             name={name}
             value={type !== 'file' ? value || '' : undefined}
             onChange={onChange}
-            required={name !== 'photo' && name !== 'researchPaper'}
+            required={ name !== 'researchPaper'}
             className={${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}}
             ref={ref} // Attach the ref
         />
@@ -389,7 +389,8 @@ console.log(formDataObject);
       value={null}
       onChange={handleChange}
       type="file"
-      ref={photoInputRef} // Assign the ref here
+      ref={photoInputRef}
+        required// Assign the ref here
     />
 
     <div>
