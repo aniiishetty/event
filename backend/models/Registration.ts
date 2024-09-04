@@ -6,25 +6,25 @@ interface RegistrationAttributes {
   id?: number;
   name: string;
   designation: 'Chair Person' | 'Council Member' | 'Principal' | 'Vice-Chancellor';
-  collegeId?: number | null; // Changed type to number | null
+  collegeId?: number | null; 
   phone: string;
   email: string;
-  photo?: Buffer;
+  photo: Buffer; // Changed to non-optional
   reason: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
   researchPaper?: Buffer;
   committeeMember?: string | null; 
 }
 
-interface RegistrationCreationAttributes extends Optional<RegistrationAttributes, 'id' | 'photo' | 'researchPaper' | 'collegeId' | 'committeeMember'> {}
+interface RegistrationCreationAttributes extends Optional<RegistrationAttributes, 'id' | 'researchPaper' | 'collegeId' | 'committeeMember'> {}
 
 class Registration extends Model<RegistrationAttributes, RegistrationCreationAttributes> implements RegistrationAttributes {
   public id?: number;
   public name!: string;
   public designation!: 'Chair Person' | 'Council Member' | 'Principal' | 'Vice-Chancellor';
-  public collegeId?: number | null; // Changed type to number | null
+  public collegeId?: number | null; 
   public phone!: string;
   public email!: string;
-  public photo?: Buffer;
+  public photo!: Buffer; // Changed to non-optional
   public reason!: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
   public researchPaper?: Buffer;
   public committeeMember?: string | null; 
@@ -64,7 +64,7 @@ Registration.init(
     },
     photo: {
       type: DataTypes.BLOB('long'),
-      allowNull: true,
+      allowNull: false, // Changed to false
     },
     reason: {
       type: DataTypes.ENUM(
