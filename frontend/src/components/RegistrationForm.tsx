@@ -136,7 +136,7 @@ const SelectField: React.FC<{ label: string, name: string, value: string, onChan
             value={value}
             onChange={onChange}
             required
-            className={${styles.inputField} ${borderClass}}
+            className={`${styles.inputField} ${borderClass}`}
         >
             <option value="" disabled>Select {label.toLowerCase()}</option>
             {options.map((option) => (
@@ -434,7 +434,7 @@ console.log(formDataObject);
 
                     {/* Display the error message below the register button */}
                     {collegeWarning && (
-                        <p className={${styles.warningMessage} ${styles.errorText}}>{collegeWarning}</p>
+                       <p className={`${styles.warningMessage} ${styles.errorText}`}>{collegeWarning}</p>
                     )}
 
                     {/* Success message after submission */}
