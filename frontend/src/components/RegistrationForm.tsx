@@ -100,17 +100,25 @@ const useTheForm = () => {
 
 
 // Reusable input field component
-const InputField = forwardRef<HTMLInputElement, { label: string, name: string, value: string | null, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, type?: string, borderClass?: string, error?: string }>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
+const InputField = forwardRef<HTMLInputElement, {
+    label: string;
+    name: string;
+    value: string | null;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    type?: string;
+    borderClass?: string;
+    error?: string;
+}>(({ label, name, value, onChange, type = 'text', borderClass = '', error }, ref) => (
     <div>
         <label htmlFor={name} className="block text-sm font-medium text-gray-700">{label}:</label>
         <input
             type={type}
             name={name}
-            value={type !== 'file' ? value || '' : undefined}
+            value={type !== 'file' ? (value || '') : undefined}
             onChange={onChange}
-            required={ name !== 'researchPaper'}
-            className={${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}}
-            ref={ref} // Attach the ref
+            required={name !== 'researchPaper'}
+            className={`${styles.inputField} ${borderClass} ${error ? styles.errorBorder : ''}`}
+            ref={ref}
         />
         {error && <p className={styles.errorText}>{error}</p>}
     </div>
@@ -383,15 +391,16 @@ console.log(formDataObject);
       borderClass={emailBorderClass} // Only this field uses emailBorderClass
     />
 
-    <InputField
-      label="Photo"
-      name="photo"
-      value={null}
-      onChange={handleChange}
-      type="file"
-      ref={photoInputRef}
-        required// Assign the ref here
-    />
+   <InputField
+    label="Photo"
+    name="photo"
+    value={undefined} // Set value to undefined for file input
+    onChange={handleChange}
+    type="file"
+    required={true} // Make sure to include required if you want it to be mandatory
+    ref={photoInputRef}
+/>
+
 
     <div>
       <label htmlFor="reason" className="block text-sm font-medium text-gray-700">Interested in :</label>
