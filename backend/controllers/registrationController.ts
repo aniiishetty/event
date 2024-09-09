@@ -32,20 +32,22 @@ const transporter = nodemailer.createTransport({
     secure: true, // Use SSL/TLS     
     auth: {         
         user: 'admin@iimstc.com', // Replace with your Hostinger email address         
-        pass: 'Admin@iimstc123#', // Replace with your Hostinger email password     },
+        pass: 'Admin@iimstc123#' // Fix: Close the pass property here
+    }
+});
 
 // Middleware to handle file size errors
 export const handleFileSizeError = (err: any, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({ message: 'File size should not exceed 5MB' });
     }
-    next(err); // Pass other errors to the default error handler
-};
+    next(err); // Fix: Properly close the function with this curly brace
+}; // Add a semicolon here to end the function
 
 // Function to convert image buffer to a data URL
 const bufferToDataURL = (buffer: Buffer, mimeType: string): string => {
     return `data:${mimeType};base64,${buffer.toString('base64')}`;
-};
+}; // Add a semicolon here
 
 // Function to generate PDF from HTML
  const generatePDF = async (content: string): Promise<Buffer> => {
