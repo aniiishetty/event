@@ -141,21 +141,24 @@ export const registerUser = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Photo size should not exceed 5 MB' });
         }
 
-        const eventId = await Registration.count() + 1;
-        const paddedEventId = eventId.toString().padStart(4, '0');
+       const eventIdBase = 105; // Starting eventId value
+const existingCount = await Registration.count();
+const eventId = eventIdBase + existingCount; // Calculate the eventId based on the base value and count
+const paddedEventId = eventId.toString().padStart(4, '0'); // Ensure the ID is padded to 4 digits
 
-        const newRegistration = await Registration.create({
-            name,
-            designation,
-            collegeId: designation === 'Council Member' ? null : college?.id,
-            committeeMember: designation === 'Council Member' ? committeeMember : null,
-            phone,
-            email,
-            photo: photo.buffer,
-            reason,
-            researchPaper: researchPaper?.buffer,
-            eventId: parseInt(paddedEventId), // Assign the generated eventId
-        });
+const newRegistration = await Registration.create({
+    name,
+    designation,
+    collegeId: designation === 'Council Member' ? null : college?.id,
+    committeeMember: designation === 'Council Member' ? committeeMember : null,
+    phone,
+    email,
+    photo: photo.buffer,
+    reason,
+    researchPaper: researchPaper?.buffer,
+    eventId: parseInt(paddedEventId), // Assign the generated eventId
+});
+
 
         // Send response immediately
         res.status(201).json({ message: 'User registered successfully. Email will be sent shortly.' });
