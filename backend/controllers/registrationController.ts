@@ -430,7 +430,7 @@ Reason: ${reason}`,
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-const generatePDF = async (content: string): Promise<Buffer> => {
+const genPDF = async (content: string): Promise<Buffer> => {
     const browser = await puppeteer.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -520,7 +520,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
             </html>
         `;
 
-        const pdfBuffer = await generatePDF(htmlContent);
+        const pdfBuffer = await genPDF(htmlContent);
 
         // Send PDF as a response
         res.set({
