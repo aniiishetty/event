@@ -45,10 +45,9 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
         });
 
         // Start Puppeteer
-       process.env.DISPLAY = ':99';
-const browser = await puppeteer.launch({
+       const browser = await puppeteer.launch({
   args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-  headless: false
+  headless: true // Set headless mode to true
 });
         const page = await browser.newPage();
         await page.setDefaultTimeout(60000); // Increase timeout
