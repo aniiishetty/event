@@ -474,7 +474,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                     attributes: ['name'],
                 },
             ],
-            order: [['createdAt', 'DESC']],
+            order: [['eventId', 'ASC']], // Sort by eventId in ascending order
         });
 
         if (registrations.length === 0) {
@@ -539,6 +539,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 export const getAllRegistrations = async (req: Request, res: Response) => {
     try {
