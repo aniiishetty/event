@@ -69,30 +69,15 @@ const generatePDF = async (registrationsWithPhotos: any[]) => {
         headless: true,
     });
 
-    try {
-        const page = await browser.newPage();
-        await page.setDefaultTimeout(120000); // Increase the timeout
+    const page = await browser.newPage();
+    await page.setDefaultTimeout(120000);
 
-        await page.setRequestInterception(true);
-        page.on('request', (request) => {
-            if (request.resourceType() === 'image') {
-                request.abort();
-            } else {
-                request.continue();
-            }
-        });
+    const htmlContent = generateHTMLContent(registrationsWithPhotos);
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
-        const htmlContent = generateHTMLContent(registrationsWithPhotos);
-        await page.setContent(htmlContent, { waitUntil: 'networkidle0' }); // Wait until the network is idle
-
-        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-        return pdfBuffer;
-    } catch (error) {
-        console.error('Error during PDF generation:', error);
-        throw error; // Rethrow the error for the outer catch block
-    } finally {
-        await browser.close();
-    }
+    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+    await browser.close();
+    return pdfBuffer;
 };
 
 const generateHTMLContent = (registrationsWithPhotos: any[]) => {
@@ -100,8 +85,9 @@ const generateHTMLContent = (registrationsWithPhotos: any[]) => {
         <html>
         <head>
             <style>
-                table { width: 100%; border-collapse: collapse; }
-                th, td { padding: 8px; border: 1px solid black; }
+                body { font-family: Arial, sans-serif; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { padding: 8px; border: 1px solid black; text-align: left; }
                 img { width: 50px; height: 50px; object-fit: cover; }
             </style>
         </head>
