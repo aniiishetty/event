@@ -438,8 +438,7 @@ const genPDF = async (content: string): Promise<Buffer> => {
             '--disable-setuid-sandbox',
             '--disable-gpu',
             '--disable-dev-shm-usage',
-            '--window-size=1920,1080', // Optional: Set window size
-            '--remote-debugging-port=9222', // Optional: Enable remote debugging
+            '--window-size=1920,1080',
         ],
     });
     const page = await browser.newPage();
@@ -465,7 +464,6 @@ const genPDF = async (content: string): Promise<Buffer> => {
     }
 };
 
-
 export const generateAllRegistrationsPDF = async (req: Request, res: Response) => {
     try {
         const registrations = await Registration.findAll({
@@ -479,25 +477,12 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
             order: [['createdAt', 'DESC']],
         });
 
-        // Convert the Buffer data to Base64 strings for photos
-        const registrationsWithBase64Photos = registrations.map(registration => {
-            const photoBuffer = registration.photo as Buffer; // Cast to Buffer if necessary
-            const photoUrl = photoBuffer
-                ? `data:image/jpeg;base64,${photoBuffer.toString('base64')}`
-                : null;
-
-            return {
-                ...registration.toJSON(),
-                photoUrl,
-            };
-        });
-
-        if (registrationsWithBase64Photos.length === 0) {
+        if (registrations.length === 0) {
             return res.status(404).json({ message: 'No registrations found' });
         }
 
         // Prepare HTML content for the PDF
-        let registrationRows = registrationsWithBase64Photos.map(reg => `
+        let registrationRows = registrations.map(reg => `
             <tr>
                 <td>${reg.name}</td>
                 <td>${reg.designation}</td>
@@ -505,7 +490,6 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                 <td>${reg.phone}</td>
                 <td>${reg.email}</td>
                 <td>${reg.eventId}</td>
-                <td><img src="${reg.photoUrl}" alt="Photo" style="width:50px;height:auto;"/></td>
             </tr>
         `).join('');
 
@@ -519,7 +503,6 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                     table { width: 100%; border-collapse: collapse; }
                     th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; }
                     th { background-color: #f2f2f2; }
-                    img { max-width: 50px; height: auto; }
                 </style>
             </head>
             <body>
@@ -533,7 +516,6 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                             <th>Phone</th>
                             <th>Email</th>
                             <th>Event ID</th>
-                            <th>Photo</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -557,7 +539,6 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
 
 export const getAllRegistrations = async (req: Request, res: Response) => {
     try {
