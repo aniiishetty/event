@@ -475,7 +475,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                 },
             ],
             order: [['eventId', 'ASC']], // Sort by eventId in ascending order
-            limit: 20, // Limit to the first 10 registrations
+            limit: 50, // Limit to the first 10 registrations
         });
 
         // Map each registration and convert the photo buffer to base64
