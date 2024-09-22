@@ -18,12 +18,15 @@ interface Registration {
   photoUrl: string;
 }
 
+const PAGE_SIZE = 10; // Number of registrations per page
+
 const List: React.FC = () => {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [viewType, setViewType] = useState<'grid' | 'list'>('list');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
     const fetchRegistrations = async () => {
@@ -43,21 +46,28 @@ const List: React.FC = () => {
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value.toLowerCase());
+    setCurrentPage(1); // Reset to the first page on new search
   };
 
   const filteredRegistrations = registrations.filter((registration) =>
     registration.name.toLowerCase().includes(searchQuery)
   );
 
+  const paginatedRegistrations = filteredRegistrations.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  const totalPages = Math.ceil(filteredRegistrations.length / PAGE_SIZE);
+
   const handleDownloadPDF = async () => {
     try {
       const response = await axios.post(
         '/api/generate-pdf',
-        { registrations: filteredRegistrations }, // Send filtered registrations to backend
-        { responseType: 'blob' } // Expect a binary response (PDF)
+        { registrations: filteredRegistrations },
+        { responseType: 'blob' }
       );
 
-      // Create a download link for the PDF
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
@@ -99,7 +109,7 @@ const List: React.FC = () => {
 
       {viewType === 'grid' ? (
         <div className="registration-list grid">
-          {filteredRegistrations.map((registration) => (
+          {paginatedRegistrations.map((registration) => (
             <div className="registration-card" key={registration.id}>
               {registration.photoUrl ? (
                 <img
@@ -145,7 +155,7 @@ const List: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredRegistrations.map((registration) => (
+            {paginatedRegistrations.map((registration) => (
               <tr key={registration.id}>
                 <td>
                   {registration.photoUrl ? (
@@ -171,6 +181,23 @@ const List: React.FC = () => {
           </tbody>
         </table>
       )}
+
+      {/* Pagination Controls */}
+      <div className="pagination">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        >
+          Previous
+        </button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
