@@ -37,7 +37,7 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
 
             return {
                 name: registration.name,
-                college: registration.college ? registration.college.name : 'N/A',
+                college: registration.college ? registration.college.name : 'N/A', // Accessing associated college
                 email: registration.email,
                 phone: registration.phone,
                 photoUrl,
