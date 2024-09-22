@@ -476,7 +476,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
             ],
             order: [['eventId', 'ASC']], // Sort by eventId in ascending order
             offset: 200, // Skip the first 30 registrations
-            limit: 10,  // Limit to the next 30 registrations (31 to 60)
+            limit: 11,  // Limit to the next 30 registrations (31 to 60)
         });
 
         // Map each registration and convert the photo buffer to base64
