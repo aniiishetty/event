@@ -475,7 +475,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                 },
             ],
             order: [['eventId', 'ASC']], // Sort by eventId in ascending order
-            offset: 100, // Skip the first 30 registrations
+            offset: 110, // Skip the first 30 registrations
             limit: 10,  // Limit to the next 30 registrations (31 to 60)
         });
 
