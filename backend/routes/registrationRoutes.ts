@@ -47,14 +47,19 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
         // Start Puppeteer
         const browser = await puppeteer.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-            headless: true, // Set headless mode to true
+            headless: false, // Set headless to false for debugging
         });
         const page = await browser.newPage();
         await page.setDefaultTimeout(120000); // Increase timeout
 
-        // Add error listener for the page
-        page.on('pageerror', (error) => {
-            console.error('Page error:', error);
+        // Disable image loading to minimize issues
+        await page.setRequestInterception(true);
+        page.on('request', (request) => {
+            if (request.resourceType() === 'image') {
+                request.abort(); // Prevent loading images
+            } else {
+                request.continue();
+            }
         });
 
         // Generate HTML content for the PDF
@@ -108,9 +113,11 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
             </html>
         `;
 
+        console.log(htmlContent); // Log HTML content for debugging
+
         try {
             await page.setContent(htmlContent);
-            await new Promise(resolve => setTimeout(resolve, 3000)); // Use wait for rendering
+            await new Promise(resolve => setTimeout(resolve, 3000)); // Allow time for rendering
             const pdfBuffer = await page.pdf({ format: 'A4' });
 
             res.set({
