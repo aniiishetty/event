@@ -36,10 +36,10 @@ const List: React.FC = () => {
       try {
         const response = await axios.get<Registration[]>(`/api/registrations?page=${currentPage}&limit=${PAGE_SIZE}&search=${debouncedSearchQuery}`);
         setRegistrations(response.data);
-        setLoading(false);
       } catch (err) {
         console.error('Error fetching registrations:', err);
         setError('Failed to load registrations');
+      } finally {
         setLoading(false);
       }
     };
@@ -81,7 +81,6 @@ const List: React.FC = () => {
                 <img
                   src={registration.photoUrl}
                   alt={`${registration.name}'s photo`}
-                  style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
                   loading="lazy"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = 'path/to/placeholder-image.png'; // Placeholder
@@ -119,7 +118,6 @@ const List: React.FC = () => {
                     <img
                       src={registration.photoUrl}
                       alt={`${registration.name}'s photo`}
-                      style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px' }}
                       loading="lazy"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'path/to/placeholder-image.png'; // Placeholder
