@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useInView } from 'react-intersection-observer';
 import '../styles/list.css';
 
 interface College {
@@ -24,13 +25,22 @@ const List: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [viewType, setViewType] = useState<'grid' | 'list'>('list');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  const { ref: loadMoreRef, inView } = useInView();
 
   useEffect(() => {
     const fetchRegistrations = async () => {
+      if (!hasMore) return;
       try {
-        const response = await axios.get<Registration[]>('/api/registrations');
-        setRegistrations(response.data);
-        setLoading(false);
+        const response = await axios.get<Registration[]>(`/api/registrations?page=${page}`);
+        if (response.data.length > 0) {
+          setRegistrations((prev) => [...prev, ...response.data]);
+          setLoading(false);
+        } else {
+          setHasMore(false); // No more data to load
+        }
       } catch (err) {
         console.error('Error fetching registrations:', err);
         setError('Failed to load registrations');
@@ -39,7 +49,13 @@ const List: React.FC = () => {
     };
 
     fetchRegistrations();
-  }, []);
+  }, [page, hasMore]);
+
+  useEffect(() => {
+    if (inView && hasMore) {
+      setPage((prev) => prev + 1); // Load next page when in view
+    }
+  }, [inView, hasMore]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value.toLowerCase());
@@ -53,11 +69,10 @@ const List: React.FC = () => {
     try {
       const response = await axios.post(
         '/api/generate-pdf',
-        { registrations: filteredRegistrations }, // Send filtered registrations to backend
-        { responseType: 'blob' } // Expect a binary response (PDF)
+        { registrations: filteredRegistrations },
+        { responseType: 'blob' }
       );
 
-      // Create a download link for the PDF
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
@@ -68,7 +83,7 @@ const List: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (loading && registrations.length === 0) {
     return <div>Loading...</div>;
   }
 
@@ -114,23 +129,14 @@ const List: React.FC = () => {
                 <div>No image available</div>
               )}
               <h2>{registration.name}</h2>
-              <p>
-                <strong>Designation:</strong> {registration.designation}
-              </p>
-              <p>
-                <strong>College:</strong> {registration.college ? registration.college.name : 'N/A'}
-              </p>
-              <p>
-                <strong>Email:</strong> {registration.email}
-              </p>
-              <p>
-                <strong>Phone:</strong> {registration.phone}
-              </p>
-              <p>
-                <strong>Reason:</strong> {registration.reason}
-              </p>
+              <p><strong>Designation:</strong> {registration.designation}</p>
+              <p><strong>College:</strong> {registration.college ? registration.college.name : 'N/A'}</p>
+              <p><strong>Email:</strong> {registration.email}</p>
+              <p><strong>Phone:</strong> {registration.phone}</p>
+              <p><strong>Reason:</strong> {registration.reason}</p>
             </div>
           ))}
+          {hasMore && <div ref={loadMoreRef}>Loading more...</div>}
         </div>
       ) : (
         <table className="registration-table">
