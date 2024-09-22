@@ -475,7 +475,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                 },
             ],
             order: [['eventId', 'ASC']], // Sort by eventId in ascending order
-            limit: 50, // Limit to the first 10 registrations
+            limit: 30, // Limit to the first 10 registrations
         });
 
         // Map each registration and convert the photo buffer to base64
@@ -498,7 +498,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
         // Prepare HTML content for the PDF
         let registrationRows = registrationsWithBase64Photos.map(reg => `
             <tr>
-                <td><img src="${reg.photoUrl}" alt="Photo" width="50" height="50"/></td>
+                <td><img src="${reg.photoUrl}" alt="Photo" width="100" height="100"/></td>
                 <td>${reg.name}</td>
                 <td>${reg.designation}</td>
                 <td>${reg.college ? reg.college.name : 'N/A'}</td>
