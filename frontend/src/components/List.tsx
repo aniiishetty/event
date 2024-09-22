@@ -28,7 +28,7 @@ const List: React.FC = () => {
   useEffect(() => {
     const fetchRegistrations = async () => {
       try {
-        const response = await axios.get<Registration[]>('http://localhost:3000/api/registrations');
+        const response = await axios.get<Registration[]>('/api/registrations');
         setRegistrations(response.data);
         setLoading(false);
       } catch (err) {
@@ -52,7 +52,7 @@ const List: React.FC = () => {
   const handleDownloadPDF = async () => {
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/generate-pdf',
+        '/api/generate-pdf',
         { registrations: filteredRegistrations }, // Send filtered registrations to backend
         { responseType: 'blob' } // Expect a binary response (PDF)
       );
