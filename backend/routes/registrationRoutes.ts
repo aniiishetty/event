@@ -119,8 +119,9 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
             });
 
             res.send(pdfBuffer);
-        } catch (err) {
-            console.error('Error during PDF generation:', err);
+        } catch (error) {
+            console.error('Error during PDF generation:', error);
+            const err = error as Error; // Type assertion
             return res.status(500).send({
                 message: 'Error generating PDF',
                 error: err.message || 'Unknown error',
@@ -130,9 +131,10 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error('Error generating PDF:', error);
+        const errorMessage = (error instanceof Error) ? error.message : 'Unknown error';
         res.status(500).send({
             message: 'Error generating PDF',
-            error: (error as Error).message || 'Unknown error',
+            error: errorMessage,
         });
     }
 });
