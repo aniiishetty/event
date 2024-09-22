@@ -45,12 +45,12 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
         });
 
         // Start Puppeteer
-       const browser = await puppeteer.launch({
-  args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-  headless: true // Set headless mode to true
-});
+        const browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+            headless: true, // Set headless mode to true
+        });
         const page = await browser.newPage();
-        await page.setDefaultTimeout(60000); // Increase timeout
+        await page.setDefaultTimeout(120000); // Increase timeout
 
         // Add error listener for the page
         page.on('pageerror', (error) => {
@@ -108,18 +108,26 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
             </html>
         `;
 
-        await page.setContent(htmlContent);
-        await new Promise(resolve => setTimeout(resolve, 3000)); // Use setTimeout for rendering// Use waitForTimeout for rendering
-        const pdfBuffer = await page.pdf({ format: 'A4' });
+        try {
+            await page.setContent(htmlContent);
+            await new Promise(resolve => setTimeout(resolve, 3000)); // Use wait for rendering
+            const pdfBuffer = await page.pdf({ format: 'A4' });
 
-        await browser.close();
+            res.set({
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': 'attachment; filename=registrations_list.pdf',
+            });
 
-        res.set({
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': 'attachment; filename=registrations_list.pdf',
-        });
-
-        res.send(pdfBuffer);
+            res.send(pdfBuffer);
+        } catch (err) {
+            console.error('Error during PDF generation:', err);
+            return res.status(500).send({
+                message: 'Error generating PDF',
+                error: err.message || 'Unknown error',
+            });
+        } finally {
+            await browser.close();
+        }
     } catch (error) {
         console.error('Error generating PDF:', error);
         res.status(500).send({
