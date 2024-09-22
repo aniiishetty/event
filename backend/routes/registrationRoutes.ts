@@ -11,6 +11,6 @@ const router = express.Router();
 router.post('/register', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'researchPaper', maxCount: 1 }]), registerUser);
 router.get('/', getAllRegistrations);
 
-app.get('/pdf', generateAllRegistrationsPDF);
+router.get('/pdf', generateAllRegistrationsPDF);
 
 export default router;
