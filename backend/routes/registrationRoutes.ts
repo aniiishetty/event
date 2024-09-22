@@ -46,10 +46,16 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
 
         // Start Puppeteer
         const browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            timeout: 60000, // Set a higher timeout limit
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+            headless: false // Change to true in production
         });
         const page = await browser.newPage();
+        await page.setDefaultTimeout(60000); // Increase timeout
+
+        // Add error listener for the page
+        page.on('pageerror', (error) => {
+            console.error('Page error:', error);
+        });
 
         // Generate HTML content for the PDF
         const htmlContent = `
@@ -102,33 +108,23 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
             </html>
         `;
 
-        // Set content in Puppeteer
         await page.setContent(htmlContent);
-
-        // Wait for 3 seconds to ensure the content is fully loaded
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        // Generate the PDF
+        await page.waitForTimeout(3000); // Optional wait for rendering
         const pdfBuffer = await page.pdf({ format: 'A4' });
 
-        // Close Puppeteer
         await browser.close();
 
-        // Set headers and send the PDF as a response
         res.set({
             'Content-Type': 'application/pdf',
             'Content-Disposition': 'attachment; filename=registrations_list.pdf',
         });
 
         res.send(pdfBuffer);
-    } catch (error: unknown) {
+    } catch (error) {
         console.error('Error generating PDF:', error);
-
-        // Safely handle the error
-        const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
-        res.status(500).json({
+        res.status(500).send({
             message: 'Error generating PDF',
-            error: errorMessage,
+            error: (error as Error).message || 'Unknown error',
         });
     }
 });
