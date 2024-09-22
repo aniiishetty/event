@@ -438,7 +438,7 @@ const genPDF = async (content: string): Promise<Buffer> => {
     const page = await browser.newPage();
 
     try {
-        await page.setContent(content, { waitUntil: 'networkidle0' });
+        await page.setContent(content, { waitUntil: 'networkidle0', timeout: 60000 });
         const pdfArrayBuffer = await page.pdf({
             format: 'A4',
             printBackground: true,
@@ -448,11 +448,12 @@ const genPDF = async (content: string): Promise<Buffer> => {
                 bottom: '40px',
                 left: '40px',
             },
+            timeout: 60000,
         });
-        // Convert Uint8Array to Buffer
         return Buffer.from(pdfArrayBuffer);
     } catch (error) {
-        console.error('Error generating PDF:', error);
+        console.error('Error generating PDF:', error.message);
+        console.error('Stack Trace:', error.stack);
         throw new Error('Error generating PDF');
     } finally {
         await browser.close();
@@ -546,7 +547,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
         });
         res.send(pdfBuffer);
     } catch (error) {
-        console.error('Error generating PDF for registrations:', error);
+        console.error('Error generating PDF for registrations:', error.message);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
