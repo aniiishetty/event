@@ -45,10 +45,11 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
         });
 
         // Start Puppeteer
-        const browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-            headless: false // Change to true in production
-        });
+       process.env.DISPLAY = ':99';
+const browser = await puppeteer.launch({
+  args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+  headless: false
+});
         const page = await browser.newPage();
         await page.setDefaultTimeout(60000); // Increase timeout
 
