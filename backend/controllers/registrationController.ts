@@ -533,3 +533,25 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+export const getAllRegistrations = async (req: Request, res: Response) => {
+    try {
+        const registrations = await Registration.findAll({
+            include: [
+                {
+                    model: College,
+                    as: 'college',
+                    attributes: ['name'],
+                },
+            ],
+        });
+
+        if (registrations.length === 0) {
+            return res.status(404).json({ message: 'No registrations found' });
+        }
+
+        res.status(200).json(registrations);
+    } catch (error) {
+        console.error('Error fetching registrations:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
