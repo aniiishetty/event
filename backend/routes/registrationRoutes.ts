@@ -109,7 +109,7 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
         `;
 
         await page.setContent(htmlContent);
-        await page.waitForTimeout(3000); // Optional wait for rendering
+        await page.waitFor(3000); // Use waitFor instead of waitForTimeout
         const pdfBuffer = await page.pdf({ format: 'A4' });
 
         await browser.close();
