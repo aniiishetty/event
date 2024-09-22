@@ -451,9 +451,13 @@ const genPDF = async (content: string): Promise<Buffer> => {
             timeout: 60000,
         });
         return Buffer.from(pdfArrayBuffer);
-    } catch (error) {
-        console.error('Error generating PDF:', error.message);
-        console.error('Stack Trace:', error.stack);
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error('Error generating PDF:', error.message);
+            console.error('Stack Trace:', error.stack);
+        } else {
+            console.error('Error generating PDF:', error);
+        }
         throw new Error('Error generating PDF');
     } finally {
         await browser.close();
@@ -473,9 +477,8 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
             order: [['createdAt', 'DESC']],
         });
 
-        // Convert the Buffer data to Base64 strings for photos
         const registrationsWithBase64Photos = registrations.map(registration => {
-            const photoBuffer = registration.photo as Buffer; // Cast to Buffer if necessary
+            const photoBuffer = registration.photo as Buffer;
             const photoUrl = photoBuffer
                 ? `data:image/jpeg;base64,${photoBuffer.toString('base64')}`
                 : null;
@@ -490,7 +493,6 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
             return res.status(404).json({ message: 'No registrations found' });
         }
 
-        // Prepare HTML content for the PDF
         let registrationRows = registrationsWithBase64Photos.map(reg => `
             <tr>
                 <td>${reg.name}</td>
@@ -540,17 +542,21 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
 
         const pdfBuffer = await genPDF(htmlContent);
 
-        // Send PDF as a response
         res.set({
             'Content-Type': 'application/pdf',
             'Content-Disposition': 'attachment; filename="registrations.pdf"',
         });
         res.send(pdfBuffer);
-    } catch (error) {
-        console.error('Error generating PDF for registrations:', error.message);
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error('Error generating PDF for registrations:', error.message);
+        } else {
+            console.error('Error generating PDF for registrations:', error);
+        }
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 export const getAllRegistrations = async (req: Request, res: Response) => {
     try {
