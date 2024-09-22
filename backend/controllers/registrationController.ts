@@ -465,7 +465,7 @@ export const getAllRegistrations = async (req: Request, res: Response) => {
         email: registration.email,
         reason: registration.reason,
         photoUrl, // Only if necessary; consider using URLs instead
-        createdAt: registration.createdAt,
+        
       };
     });
 
