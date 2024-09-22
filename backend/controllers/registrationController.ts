@@ -431,8 +431,12 @@ Reason: ${reason}`,
     }
 };
 export const getAllRegistrations = async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1; // Default to the first page
+  const limit = parseInt(req.query.limit as string) || 10; // Default limit
+  const offset = (page - 1) * limit;
+
   try {
-    const registrations = await Registration.findAll({
+    const { count, rows } = await Registration.findAndCountAll({
       include: [
         {
           model: College,
@@ -441,26 +445,36 @@ export const getAllRegistrations = async (req: Request, res: Response) => {
         },
       ],
       order: [['createdAt', 'DESC']],
+      limit,
+      offset,
     });
 
-    // Convert the Buffer data to Base64 strings
-    const registrationsWithBase64Photos = registrations.map(registration => {
+    // Convert the Buffer data to Base64 strings only for the required fields
+    const registrationsWithBase64Photos = rows.map(registration => {
       const photoBuffer = registration.photo as Buffer; // Cast to Buffer if necessary
       const photoUrl = photoBuffer
         ? `data:image/jpeg;base64,${photoBuffer.toString('base64')}`
         : null;
 
       return {
-        ...registration.toJSON(),
-        photoUrl,
+        id: registration.id,
+        name: registration.name,
+        designation: registration.designation,
+        college: registration.college,
+        phone: registration.phone,
+        email: registration.email,
+        reason: registration.reason,
+        photoUrl, // Only if necessary; consider using URLs instead
+        createdAt: registration.createdAt,
       };
     });
 
-    if (registrationsWithBase64Photos.length === 0) {
-      return res.status(404).json({ message: 'No registrations found' });
-    }
-
-    res.status(200).json(registrationsWithBase64Photos);
+    res.status(200).json({
+      total: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+      registrations: registrationsWithBase64Photos,
+    });
   } catch (error) {
     console.error('Error fetching registrations:', error);
     res.status(500).json({ message: 'Internal server error' });
