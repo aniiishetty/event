@@ -464,7 +464,7 @@ const genPDF = async (content: string): Promise<Buffer> => {
     }
 };
 
-export const generateRegistrationsFrom31To60PDF = async (req: Request, res: Response) => {
+export const generateAllRegistrationsPDF = async (req: Request, res: Response) => {
     try {
         const registrations = await Registration.findAll({
             include: [
@@ -523,7 +523,7 @@ export const generateRegistrationsFrom31To60PDF = async (req: Request, res: Resp
                 </style>
             </head>
             <body>
-                <h1>Registrations List (31 to 60)</h1>
+                <h1>Registrations List</h1>
                 <table>
                     <thead>
                         <tr>
@@ -549,7 +549,7 @@ export const generateRegistrationsFrom31To60PDF = async (req: Request, res: Resp
         // Send PDF as a response
         res.set({
             'Content-Type': 'application/pdf',
-            'Content-Disposition': 'attachment; filename="registrations_31_to_60.pdf"',
+            'Content-Disposition': 'attachment; filename="registrations.pdf"',
         });
         res.send(pdfBuffer);
     } catch (error) {
@@ -557,7 +557,6 @@ export const generateRegistrationsFrom31To60PDF = async (req: Request, res: Resp
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
 
 
 export const getAllRegistrations = async (req: Request, res: Response) => {
