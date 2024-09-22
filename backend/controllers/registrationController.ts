@@ -26,14 +26,12 @@ export const upload = multer({
 
 // Configure nodemailer with Hostinger
 // Configure the email transport
-const transporter = nodemailer.createTransport({     
-    host: 'smtp.hostinger.com',     
-    port: 465,     
-    secure: true, // Use SSL/TLS     
-    auth: {         
-        user: 'admin@iimstc.com', // Replace with your Hostinger email address         
-        pass: 'Admin@iimstc123#' // Fix: Close the pass property here
-    }
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: 'lmsad6123@gmail.com',
+    pass: 'xijxdmkupniydinn',
+  },
 });
 
 // Middleware to handle file size errors
@@ -141,24 +139,21 @@ export const registerUser = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Photo size should not exceed 5 MB' });
         }
 
-       const eventIdBase = 105; // Starting eventId value
-const existingCount = await Registration.count();
-const eventId = eventIdBase + existingCount; // Calculate the eventId based on the base value and count
-const paddedEventId = eventId.toString().padStart(4, '0'); // Ensure the ID is padded to 4 digits
+        const eventId = await Registration.count() + 1;
+        const paddedEventId = eventId.toString().padStart(4, '0');
 
-const newRegistration = await Registration.create({
-    name,
-    designation,
-    collegeId: designation === 'Council Member' ? null : college?.id,
-    committeeMember: designation === 'Council Member' ? committeeMember : null,
-    phone,
-    email,
-    photo: photo.buffer,
-    reason,
-    researchPaper: researchPaper?.buffer,
-    eventId: parseInt(paddedEventId), // Assign the generated eventId
-});
-
+        const newRegistration = await Registration.create({
+            name,
+            designation,
+            collegeId: designation === 'Council Member' ? null : college?.id,
+            committeeMember: designation === 'Council Member' ? committeeMember : null,
+            phone,
+            email,
+            photo: photo.buffer,
+            reason,
+            researchPaper: researchPaper?.buffer,
+            eventId: parseInt(paddedEventId), // Assign the generated eventId
+        });
 
         // Send response immediately
         res.status(201).json({ message: 'User registered successfully. Email will be sent shortly.' });
@@ -167,8 +162,8 @@ const newRegistration = await Registration.create({
         setTimeout(async () => {
             try {
                 const confirmationMailOptions = {
-                    from: 'admin@iimstc.com',
-                    to: 'admin@iimstc.com',
+                    from: 'lmsad6123@gmail.com',
+                    to: 'lmsad6123@gmail.com',
                     subject: 'New Registration',
                     text: `A new user has registered with the following details:\n\n
 Name: ${name}
@@ -385,8 +380,8 @@ Reason: ${reason}`,
          const invitePdf = fs.readFileSync(invitePdfPath);
         
         const mailOptions = {
-          from: 'admin@iimstc.com',
-          to: email,
+          from: 'lmsad6123@gmail.com',
+          to: 'lmsad6123@gmail.com',
           subject: 'Invitation Confirmation for "Diamond Beneath Your Feet" Event',
           html: `
             <p>Respected <b>${name}</b>,</p>
@@ -434,4 +429,40 @@ Reason: ${reason}`,
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
+};
+export const getAllRegistrations = async (req: Request, res: Response) => {
+  try {
+    const registrations = await Registration.findAll({
+      include: [
+        {
+          model: College,
+          as: 'college',
+          attributes: ['id', 'name'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    // Convert the Buffer data to Base64 strings
+    const registrationsWithBase64Photos = registrations.map(registration => {
+      const photoBuffer = registration.photo as Buffer; // Cast to Buffer if necessary
+      const photoUrl = photoBuffer
+        ? `data:image/jpeg;base64,${photoBuffer.toString('base64')}`
+        : null;
+
+      return {
+        ...registration.toJSON(),
+        photoUrl,
+      };
+    });
+
+    if (registrationsWithBase64Photos.length === 0) {
+      return res.status(404).json({ message: 'No registrations found' });
+    }
+
+    res.status(200).json(registrationsWithBase64Photos);
+  } catch (error) {
+    console.error('Error fetching registrations:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
