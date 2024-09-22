@@ -46,7 +46,8 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
 
         // Start Puppeteer
         const browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            timeout: 60000, // Set a higher timeout limit
         });
         const page = await browser.newPage();
 
@@ -101,11 +102,19 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
             </html>
         `;
 
+        // Set content in Puppeteer
         await page.setContent(htmlContent);
+
+        // Wait for 3 seconds to ensure the content is fully loaded
+        await page.waitForTimeout(3000);
+
+        // Generate the PDF
         const pdfBuffer = await page.pdf({ format: 'A4' });
 
+        // Close Puppeteer
         await browser.close();
 
+        // Set headers and send the PDF as a response
         res.set({
             'Content-Type': 'application/pdf',
             'Content-Disposition': 'attachment; filename=registrations_list.pdf',
@@ -114,9 +123,13 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
         res.send(pdfBuffer);
     } catch (error) {
         console.error('Error generating PDF:', error);
-        res.status(500).send('Error generating PDF');
+
+        // Send a more detailed error message for troubleshooting
+        res.status(500).json({
+            message: 'Error generating PDF',
+            error: error.message,
+        });
     }
 });
-
 
 export default router;
