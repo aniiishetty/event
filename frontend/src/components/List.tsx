@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useDebounce } from 'use-debounce';
 import '../styles/list.css';
 
 interface College {
@@ -18,17 +19,22 @@ interface Registration {
   photoUrl: string;
 }
 
+const PAGE_SIZE = 10; // Number of registrations per page
+
 const List: React.FC = () => {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [viewType, setViewType] = useState<'grid' | 'list'>('list');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300); // Debounce the search query
 
   useEffect(() => {
     const fetchRegistrations = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get<Registration[]>('/api/registrations');
+        const response = await axios.get<Registration[]>(`/api/registrations?page=${currentPage}&limit=${PAGE_SIZE}&search=${debouncedSearchQuery}`);
         setRegistrations(response.data);
         setLoading(false);
       } catch (err) {
@@ -39,42 +45,15 @@ const List: React.FC = () => {
     };
 
     fetchRegistrations();
-  }, []);
+  }, [currentPage, debouncedSearchQuery]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value.toLowerCase());
+    setSearchQuery(event.target.value);
+    setCurrentPage(1); // Reset to the first page on new search
   };
 
-  const filteredRegistrations = registrations.filter((registration) =>
-    registration.name.toLowerCase().includes(searchQuery)
-  );
-
-  const handleDownloadPDF = async () => {
-    try {
-      const response = await axios.post(
-        '/api/generate-pdf',
-        { registrations: filteredRegistrations }, // Send filtered registrations to backend
-        { responseType: 'blob' } // Expect a binary response (PDF)
-      );
-
-      // Create a download link for the PDF
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = 'registrations_list.pdf';
-      link.click();
-    } catch (error) {
-      console.error('Error downloading PDF:', error);
-    }
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
@@ -92,20 +71,18 @@ const List: React.FC = () => {
         <button onClick={() => setViewType('list')} className={viewType === 'list' ? 'active' : ''}>
           List View
         </button>
-        <button onClick={handleDownloadPDF} className="download-btn">
-          Download PDF
-        </button>
       </div>
 
       {viewType === 'grid' ? (
         <div className="registration-list grid">
-          {filteredRegistrations.map((registration) => (
+          {registrations.map((registration) => (
             <div className="registration-card" key={registration.id}>
               {registration.photoUrl ? (
                 <img
                   src={registration.photoUrl}
                   alt={`${registration.name}'s photo`}
                   style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
+                  loading="lazy"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = 'path/to/placeholder-image.png'; // Placeholder
                   }}
@@ -114,21 +91,11 @@ const List: React.FC = () => {
                 <div>No image available</div>
               )}
               <h2>{registration.name}</h2>
-              <p>
-                <strong>Designation:</strong> {registration.designation}
-              </p>
-              <p>
-                <strong>College:</strong> {registration.college ? registration.college.name : 'N/A'}
-              </p>
-              <p>
-                <strong>Email:</strong> {registration.email}
-              </p>
-              <p>
-                <strong>Phone:</strong> {registration.phone}
-              </p>
-              <p>
-                <strong>Reason:</strong> {registration.reason}
-              </p>
+              <p><strong>Designation:</strong> {registration.designation}</p>
+              <p><strong>College:</strong> {registration.college ? registration.college.name : 'N/A'}</p>
+              <p><strong>Email:</strong> {registration.email}</p>
+              <p><strong>Phone:</strong> {registration.phone}</p>
+              <p><strong>Reason:</strong> {registration.reason}</p>
             </div>
           ))}
         </div>
@@ -145,7 +112,7 @@ const List: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredRegistrations.map((registration) => (
+            {registrations.map((registration) => (
               <tr key={registration.id}>
                 <td>
                   {registration.photoUrl ? (
@@ -153,6 +120,7 @@ const List: React.FC = () => {
                       src={registration.photoUrl}
                       alt={`${registration.name}'s photo`}
                       style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px' }}
+                      loading="lazy"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'path/to/placeholder-image.png'; // Placeholder
                       }}
@@ -171,6 +139,23 @@ const List: React.FC = () => {
           </tbody>
         </table>
       )}
+
+      {/* Pagination Controls */}
+      <div className="pagination">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        >
+          Previous
+        </button>
+        <span>Page {currentPage}</span>
+        <button
+          disabled={registrations.length < PAGE_SIZE}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
