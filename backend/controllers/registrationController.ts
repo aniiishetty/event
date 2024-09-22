@@ -464,7 +464,7 @@ const genPDF = async (content: string): Promise<Buffer> => {
     }
 };
 
-export const generateAllRegistrationsPDF = async (req: Request, res: Response) => {
+export const generateRegistrationsFrom31To60PDF = async (req: Request, res: Response) => {
     try {
         const registrations = await Registration.findAll({
             include: [
@@ -475,7 +475,8 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                 },
             ],
             order: [['eventId', 'ASC']], // Sort by eventId in ascending order
-            limit: 30, // Limit to the first 10 registrations
+            offset: 30, // Skip the first 30 registrations
+            limit: 30,  // Limit to the next 30 registrations (31 to 60)
         });
 
         // Map each registration and convert the photo buffer to base64
@@ -522,7 +523,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                 </style>
             </head>
             <body>
-                <h1>Registrations List</h1>
+                <h1>Registrations List (31 to 60)</h1>
                 <table>
                     <thead>
                         <tr>
@@ -548,7 +549,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
         // Send PDF as a response
         res.set({
             'Content-Type': 'application/pdf',
-            'Content-Disposition': 'attachment; filename="registrations.pdf"',
+            'Content-Disposition': 'attachment; filename="registrations_31_to_60.pdf"',
         });
         res.send(pdfBuffer);
     } catch (error) {
@@ -556,6 +557,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 export const getAllRegistrations = async (req: Request, res: Response) => {
