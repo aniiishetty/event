@@ -466,3 +466,106 @@ export const getAllRegistrations = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+export const generateAllRegistrationsPDF = async (req: Request, res: Response) => {
+    try {
+        const registrations = await Registration.findAll({
+            include: [
+                {
+                    model: College,
+                    as: 'college',
+                    attributes: ['name'],
+                },
+            ],
+        });
+
+        if (registrations.length === 0) {
+            return res.status(404).json({ message: 'No registrations found' });
+        }
+
+        // Prepare HTML content for the PDF
+        let registrationRows = registrations.map(reg => `
+            <tr>
+                <td>${reg.name}</td>
+                <td>${reg.designation}</td>
+                <td>${reg.college ? reg.college.name : 'N/A'}</td>
+                <td>${reg.phone}</td>
+                <td>${reg.email}</td>
+                <td>${reg.reason}</td>
+            </tr>
+        `).join('');
+
+        const htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Registrations List</title>
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; }
+                    th { background-color: #f2f2f2; }
+                </style>
+            </head>
+            <body>
+                <h1>Registrations List</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>College</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${registrationRows}
+                    </tbody>
+                </table>
+            </body>
+            </html>
+        `;
+
+        const pdfBuffer = await generatePDF(htmlContent);
+
+        // Send PDF as a response
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': 'attachment; filename="registrations.pdf"',
+        });
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error('Error generating PDF for registrations:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+// Ensure you also have this function to generate PDF as defined in your existing code
+const generatePDF = async (content: string): Promise<Buffer> => {
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+
+    try {
+        await page.setContent(content, { waitUntil: 'networkidle0' });
+        const pdfBuffer = await page.pdf({
+            format: 'A4',
+            printBackground: true,
+            margin: {
+                top: '40px',
+                right: '40px',
+                bottom: '40px',
+                left: '40px',
+            },
+        });
+        return pdfBuffer;
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        throw new Error('Error generating PDF');
+    } finally {
+        await browser.close();
+    }
+};
