@@ -6,14 +6,15 @@ interface RegistrationAttributes {
   id?: number;
   name: string;
   designation: 'Chair Person' | 'Council Member' | 'Principal' | 'Vice-Chancellor';
-  collegeId?: number | null; 
+  collegeId?: number | null;
   phone: string;
   email: string;
   photo: Buffer;
   reason: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
   researchPaper?: Buffer;
-  committeeMember?: string | null; 
-  eventId?: number; // Marked as optional for creation, handled by auto-increment
+  committeeMember?: string | null;
+  eventId?: number;
+  college?: College; // Association with College
 }
 
 interface RegistrationCreationAttributes extends Optional<RegistrationAttributes, 'id' | 'researchPaper' | 'collegeId' | 'committeeMember' | 'eventId'> {}
@@ -22,14 +23,15 @@ class Registration extends Model<RegistrationAttributes, RegistrationCreationAtt
   public id?: number;
   public name!: string;
   public designation!: 'Chair Person' | 'Council Member' | 'Principal' | 'Vice-Chancellor';
-  public collegeId?: number | null; 
+  public collegeId?: number | null;
   public phone!: string;
   public email!: string;
   public photo!: Buffer;
   public reason!: 'To know about International Internship' | 'To know about Textbook' | 'To present research paper';
   public researchPaper?: Buffer;
-  public committeeMember?: string | null; 
+  public committeeMember?: string | null;
   public eventId?: number;
+  public college?: College; // Association with College
 }
 
 Registration.init(
