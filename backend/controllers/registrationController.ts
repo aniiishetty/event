@@ -432,15 +432,20 @@ Reason: ${reason}`,
 };
 const genPDF = async (content: string): Promise<Buffer> => {
     const browser = await puppeteer.launch({
-        headless: false, // Set to false for debugging, change to true for production
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--window-size=1920,1080', // Optional: Set window size
+            '--remote-debugging-port=9222', // Optional: Enable remote debugging
+        ],
     });
     const page = await browser.newPage();
 
     try {
-        await page.setContent(content, { waitUntil: 'networkidle0', timeout: 60000 });
-        console.log(await page.content()); // Log the content for debugging
-
+        await page.setContent(content, { waitUntil: 'networkidle0' });
         const pdfArrayBuffer = await page.pdf({
             format: 'A4',
             printBackground: true,
@@ -451,7 +456,6 @@ const genPDF = async (content: string): Promise<Buffer> => {
                 left: '40px',
             },
         });
-
         return Buffer.from(pdfArrayBuffer);
     } catch (error) {
         console.error('Error generating PDF:', error);
@@ -460,6 +464,7 @@ const genPDF = async (content: string): Promise<Buffer> => {
         await browser.close();
     }
 };
+
 
 export const generateAllRegistrationsPDF = async (req: Request, res: Response) => {
     try {
