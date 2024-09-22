@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import upload from '../middleware/upload'; // Adjust the path if needed
 import { registerUser, getAllRegistrations } from '../controllers/registrationController';
 import puppeteer from 'puppeteer';
+import { Registration } from '../models/Registration'; // Adjust the path if needed
+import { College } from '../models/College';
 
 const router = express.Router();
 
@@ -10,9 +12,39 @@ router.post('/register', upload.fields([{ name: 'photo', maxCount: 1 }, { name: 
 router.get('/', getAllRegistrations);
 
 router.post('/generate-pdf', async (req: Request, res: Response) => {
-    const { registrations } = req.body; // Expect registrations from frontend
-
     try {
+        // Fetch all registration data including college details
+        const registrations = await Registration.findAll({
+            include: [
+                {
+                    model: College,
+                    as: 'college',
+                    attributes: ['name'], // Only fetch college name
+                },
+            ],
+        });
+
+        if (registrations.length === 0) {
+            return res.status(404).json({ message: 'No registrations found' });
+        }
+
+        // Convert the Buffer data to Base64 strings for the photos
+        const registrationsWithPhotos = registrations.map((registration) => {
+            const photoBuffer = registration.photo as Buffer;
+            const photoUrl = photoBuffer
+                ? `data:image/jpeg;base64,${photoBuffer.toString('base64')}`
+                : 'path/to/placeholder-image.png'; // Fallback for no photo
+
+            return {
+                name: registration.name,
+                college: registration.college ? registration.college.name : 'N/A',
+                email: registration.email,
+                phone: registration.phone,
+                photoUrl,
+            };
+        });
+
+        // Start Puppeteer
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
@@ -49,13 +81,13 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
                         </tr>
                     </thead>
                     <tbody>
-                        ${registrations
+                        ${registrationsWithPhotos
                             .map(
-                                (reg: any) => `
+                                (reg) => `
                                 <tr>
-                                    <td><img src="${reg.photoUrl || 'path/to/placeholder-image.png'}" /></td>
+                                    <td><img src="${reg.photoUrl}" /></td>
                                     <td>${reg.name}</td>
-                                    <td>${reg.college ? reg.college.name : 'N/A'}</td>
+                                    <td>${reg.college}</td>
                                     <td>${reg.email}</td>
                                     <td>${reg.phone}</td>
                                 </tr>`
