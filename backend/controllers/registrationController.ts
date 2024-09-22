@@ -475,15 +475,30 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                 },
             ],
             order: [['eventId', 'ASC']], // Sort by eventId in ascending order
+            limit: 10, // Limit to the first 10 registrations
         });
 
-        if (registrations.length === 0) {
+        // Map each registration and convert the photo buffer to base64
+        const registrationsWithBase64Photos = registrations.map(reg => {
+            const photoBuffer = reg.photo as Buffer; // Cast to Buffer if necessary
+            const photoUrl = photoBuffer
+                ? `data:image/jpeg;base64,${photoBuffer.toString('base64')}`
+                : null;
+
+            return {
+                ...reg.toJSON(),
+                photoUrl,
+            };
+        });
+
+        if (registrationsWithBase64Photos.length === 0) {
             return res.status(404).json({ message: 'No registrations found' });
         }
 
         // Prepare HTML content for the PDF
-        let registrationRows = registrations.map(reg => `
+        let registrationRows = registrationsWithBase64Photos.map(reg => `
             <tr>
+                <td><img src="${reg.photoUrl}" alt="Photo" width="50" height="50"/></td>
                 <td>${reg.name}</td>
                 <td>${reg.designation}</td>
                 <td>${reg.college ? reg.college.name : 'N/A'}</td>
@@ -503,6 +518,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                     table { width: 100%; border-collapse: collapse; }
                     th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; }
                     th { background-color: #f2f2f2; }
+                    img { border-radius: 50%; }
                 </style>
             </head>
             <body>
@@ -510,6 +526,7 @@ export const generateAllRegistrationsPDF = async (req: Request, res: Response) =
                 <table>
                     <thead>
                         <tr>
+                            <th>Photo</th>
                             <th>Name</th>
                             <th>Designation</th>
                             <th>College</th>
