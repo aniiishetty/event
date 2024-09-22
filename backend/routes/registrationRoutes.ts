@@ -106,7 +106,7 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
         await page.setContent(htmlContent);
 
         // Wait for 3 seconds to ensure the content is fully loaded
-        await page.waitForTimeout(3000);
+        await new Promise(resolve => setTimeout(resolve, 3000));
 
         // Generate the PDF
         const pdfBuffer = await page.pdf({ format: 'A4' });
@@ -121,13 +121,14 @@ router.post('/generate-pdf', async (req: Request, res: Response) => {
         });
 
         res.send(pdfBuffer);
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Error generating PDF:', error);
 
-        // Send a more detailed error message for troubleshooting
+        // Safely handle the error
+        const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
         res.status(500).json({
             message: 'Error generating PDF',
-            error: error.message,
+            error: errorMessage,
         });
     }
 });
