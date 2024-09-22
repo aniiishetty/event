@@ -102,7 +102,7 @@ const List: React.FC = () => {
         <table className="registration-table">
           <thead>
             <tr>
-              <th>Photo</th>
+              <th>Photos</th>
               <th>Name</th>
               <th>College Name</th>
               <th>Email</th>
