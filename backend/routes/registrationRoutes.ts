@@ -69,25 +69,30 @@ const generatePDF = async (registrationsWithPhotos: any[]) => {
         headless: true,
     });
 
-    const page = await browser.newPage();
-    await page.setDefaultTimeout(120000);
+    try {
+        const page = await browser.newPage();
+        await page.setDefaultTimeout(120000); // Increase the timeout
 
-    await page.setRequestInterception(true);
-    page.on('request', (request) => {
-        if (request.resourceType() === 'image') {
-            request.abort();
-        } else {
-            request.continue();
-        }
-    });
+        await page.setRequestInterception(true);
+        page.on('request', (request) => {
+            if (request.resourceType() === 'image') {
+                request.abort();
+            } else {
+                request.continue();
+            }
+        });
 
-    const htmlContent = generateHTMLContent(registrationsWithPhotos);
-    await page.setContent(htmlContent);
-    await page.waitForSelector('h1'); // Wait for the header to ensure content is rendered
+        const htmlContent = generateHTMLContent(registrationsWithPhotos);
+        await page.setContent(htmlContent, { waitUntil: 'networkidle0' }); // Wait until the network is idle
 
-    const pdfBuffer = await page.pdf({ format: 'A4' });
-    await browser.close();
-    return pdfBuffer;
+        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+        return pdfBuffer;
+    } catch (error) {
+        console.error('Error during PDF generation:', error);
+        throw error; // Rethrow the error for the outer catch block
+    } finally {
+        await browser.close();
+    }
 };
 
 const generateHTMLContent = (registrationsWithPhotos: any[]) => {
